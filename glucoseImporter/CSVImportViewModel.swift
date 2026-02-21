@@ -22,13 +22,7 @@ public final class CSVImportViewModel: ObservableObject {
     @Published public var previewRecords: [GlucoseRecord] = []
     @Published public var lastSavedBatchID: String? = nil
     
-    public enum DuplicateStrategy {
-        case skip
-        case overwrite
-    }
-    
     @Published public var showDuplicateAlert = false
-    @Published public var duplicateStrategy: DuplicateStrategy = .skip
     
     // 탭 및 Action 상태
     @Published public var selectedTab: Int = 0 // 0: 성공건, 1: 오류건
@@ -124,7 +118,7 @@ public final class CSVImportViewModel: ObservableObject {
                     self.showDuplicateAlert = true
                 } else {
                     // 중복이 없으면 바로 저장
-                    self.saveToHealthKit(strategy: .skip)
+                    self.saveToHealthKit()
                 }
             } catch {
                 self.errorMessage = error.localizedDescription
@@ -134,14 +128,14 @@ public final class CSVImportViewModel: ObservableObject {
     }
     
     /// 실제 HealthKit 저장 수행
-    public func saveToHealthKit(strategy: DuplicateStrategy) {
+    public func saveToHealthKit() {
         guard let result = parseResult, !result.validRecords.isEmpty else { return }
         
         Task {
             isImporting = true
             do {
-                let (savedCount, batchID) = try await HealthKitStoreManager.shared.saveGlucoseRecords(result.validRecords, strategy: strategy)
-                print("저장 완료: \(savedCount)건 (Strategy: \(strategy), Batch: \(batchID))")
+                let (savedCount, batchID) = try await HealthKitStoreManager.shared.saveGlucoseRecords(result.validRecords)
+                print("저장 완료: \(savedCount)건 (Batch: \(batchID))")
                 
                 // 저장 성공 후 UI 및 상태 데이터 업데이트
                 self.lastSavedBatchID = batchID

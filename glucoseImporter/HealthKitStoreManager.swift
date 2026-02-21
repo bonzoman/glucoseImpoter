@@ -53,7 +53,7 @@ public final class HealthKitStoreManager {
     ///   - records: CSVReader를 통해 파싱된 `GlucoseRecord` 배열
     ///   - strategy: 중복 데이터 처리 방식 (.skip 또는 .overwrite)
     /// - Returns: 추가로 저장된(신규/덮어쓰기) 샘플의 개수 및 롤백을 위한 Batch ID
-    public func saveGlucoseRecords(_ records: [GlucoseRecord], strategy: CSVImportViewModel.DuplicateStrategy = .skip) async throws -> (Int, String) {
+    public func saveGlucoseRecords(_ records: [GlucoseRecord]) async throws -> (Int, String) {
         guard !records.isEmpty else { return (0, "") }
         
         // 권한 확인 보장 (이론상 쓰기 권한이 없으면 아래 save 동작 시 에러 발생)
@@ -78,14 +78,6 @@ public final class HealthKitStoreManager {
             let value = sample.quantity.doubleValue(for: HKUnit(from: "mg/dL"))
             return "\(date)_\(value)"
         })
-        
-        // 3. 덮어쓰기 로직 처리
-        if strategy == .overwrite && !existingSamples.isEmpty {
-            // 중복된 기존 데이터들을 HealthKit에서 삭제
-            try await healthStore.delete(existingSamples)
-            // 덮어쓰기이므로 existingSignatures 검사를 무효화시켜 모두 새로 저장되도록 함
-            existingSignatures.removeAll()
-        }
         
         // 4. 필터링 및 변환 작업 (mg/dL 단위 명시)
         let mgDLUnit = HKUnit(from: "mg/dL")

@@ -252,18 +252,15 @@ public struct CSVPreviewView: View {
                 viewModel.startHealthKitSave()
             }
         } message: {
-            Text("검증이 통과된 \(viewModel.previewRecords.count)건의 데이터를 HealthKit에 덮어쓰기 권한으로 기록하시겠습니까?")
+            Text("검증이 통과된 \(viewModel.parseResult?.validRecords.count ?? 0)건의 데이터를 HealthKit에 기록하시겠습니까?")
         }
         .alert("중복 데이터 발견", isPresented: $viewModel.showDuplicateAlert) {
-            Button("기존 데이터 덮어쓰기", role: .destructive) {
-                viewModel.saveToHealthKit(strategy: .overwrite)
-            }
-            Button("새로운 데이터만 추가") {
-                viewModel.saveToHealthKit(strategy: .skip)
+            Button("저장") {
+                viewModel.saveToHealthKit()
             }
             Button("취소", role: .cancel) { }
         } message: {
-            Text("선택한 기간에 이미 저장된 혈당 데이터가 있습니다. 기존 데이터를 지우고 덮어쓰시겠습니까, 아니면 새로운 데이터만 추가로 저장하시겠습니까?")
+            Text(getDuplicateAlertMessage())
         }
         .alert("저장 완료", isPresented: $viewModel.showSaveSuccessAlert) {
             Button("확인", role: .cancel) { 
@@ -294,12 +291,23 @@ public struct CSVPreviewView: View {
             sampleColumns = targetLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
             if sampleColumns.count > 0 { selectedDateIndex = 0 }
             if sampleColumns.count > 1 { selectedValueIndex = 1 }
-        } else if let firstValid = viewModel.parseResult?.validRecords.first {
+        } else if viewModel.parseResult?.validRecords.isEmpty == false {
             // 이 곳은 도달할 가능성 적음
             sampleColumns = ["날짜", "수치"]
         }
     }
     
+    private func getDuplicateAlertMessage() -> String {
+        guard let records = viewModel.parseResult?.validRecords, !records.isEmpty,
+              let minDate = records.min(by: { $0.timestamp < $1.timestamp })?.timestamp,
+              let maxDate = records.max(by: { $0.timestamp < $1.timestamp })?.timestamp else {
+            return "선택한 기간에 저장된 혈당데이터가 있습니다. 추가로 저장하시겠습니까?"
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy.MM.dd"
+        return "선택한 기간(\(formatter.string(from: minDate)) ~ \(formatter.string(from: maxDate)))에 저장된 혈당데이터가 있습니다. 추가로 저장하시겠습니까?"
+    }
+
     private func formatDate(_ date: Date, with formatString: String?) -> String {
         guard let format = formatString else {
             return date.formatted()
