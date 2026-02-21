@@ -12,36 +12,61 @@ public struct ManualMappingView: View {
     }
     
     public var body: some View {
-        Form {
-            Section(header: Text("알 수 없는 포맷 감지됨")) {
-                Text("아래 데이터 미리보기를 확인하고, 해당하는 열을 선택해 주세요.")
-                    .font(.subheadline)
+        VStack(spacing: 24) {
+            Text("알 수 없는 포맷 감지됨")
+                .font(.headline)
+            Text("아래 데이터 미리보기를 확인하고, 해당하는 열을 선택해 주세요.")
+                .font(.subheadline)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+            
+            if sampleColumns.isEmpty {
+                Text("데이터를 불러올 수 없습니다.")
                     .foregroundColor(.secondary)
+                    .padding()
+            } else {
+                VStack(alignment: .leading, spacing: 20) {
+                    // 1. 측정 일시
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("측정일시")
+                            .font(.subheadline)
+                            .bold()
+                        
+                        Picker("측정 일시 열 선택", selection: $selectedDateIndex) {
+                            ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .padding(8)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(8)
+                    }
+                    
+                    // 2. 혈당 수치
+                    VStack(alignment: .leading, spacing: 8) {
+                        Text("혈당수치")
+                            .font(.subheadline)
+                            .bold()
+                        
+                        Picker("혈당 수치 열 선택", selection: $selectedValueIndex) {
+                            ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                            }
+                        }
+                        .pickerStyle(.menu)
+                        .padding(8)
+                        .background(Color(UIColor.secondarySystemBackground))
+                        .cornerRadius(8)
+                    }
+                }
+                .padding(.horizontal)
             }
             
-            Section(header: Text("컬럼 위치 매핑 (실제 데이터 1행 기반)")) {
-                if sampleColumns.isEmpty {
-                    Text("데이터를 불러올 수 없습니다.")
-                        .foregroundColor(.secondary)
-                } else {
-                    Picker("측정 일시가 있는 열", selection: $selectedDateIndex) {
-                        ForEach(0..<sampleColumns.count, id: \.self) { index in
-                            Text("열 \(index): \(sampleColumns[index])").tag(index)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                    
-                    Picker("혈당 수치가 있는 열", selection: $selectedValueIndex) {
-                        ForEach(0..<sampleColumns.count, id: \.self) { index in
-                            Text("열 \(index): \(sampleColumns[index])").tag(index)
-                        }
-                    }
-                    .pickerStyle(.menu)
-                }
-            }
+            Spacer()
             
             Button(action: {
-                // dateFormat은 옵셔널로 nil 전달하여 자동 인식 유도
                 let config = ManualCSVFormat(dateColumnIndex: selectedDateIndex, valueColumnIndex: selectedValueIndex, dateFormat: nil)
                 viewModel.applyManualMapping(config: config)
             }) {
@@ -55,9 +80,15 @@ public struct ManualMappingView: View {
                     }
                     Spacer()
                 }
+                .padding()
+                .background(Color.blue)
+                .foregroundColor(.white)
+                .cornerRadius(10)
             }
+            .padding(.horizontal)
             .disabled(sampleColumns.isEmpty || viewModel.isImporting || selectedDateIndex == selectedValueIndex)
         }
+        .padding(.vertical)
         .onAppear {
             extractSampleColumns()
         }

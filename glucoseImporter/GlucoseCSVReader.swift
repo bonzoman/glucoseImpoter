@@ -207,15 +207,18 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                             detectedVendor = .custom
                             currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: validFormat)
                         } else {
+                            totalReadLines -= 1 // 헤더 행 등으로 간주하여 데이터 총건수에서 제외
                             continue
                         }
                     } else {
+                        totalReadLines -= 1 // 헤더 행 등으로 간주하여 데이터 총건수에서 제외
                         continue
                     }
                 } else {
                     if lineNumber > 20 && currentDetection == nil {
                         throw GlucoseCSVReaderError.unsupportedFormat
                     }
+                    totalReadLines -= 1 // 포맷 감지 전의 기타 불필요 구문으로 간주
                     continue
                 }
             }
@@ -256,8 +259,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             guard let validDate = date else {
                 // 수동 매핑 지정 시, 파일 최상단부(헤더 등)에서 날짜 포맷이 안 맞으면 조용히 무시 (오류 노출 방지)
                 if manualConfig != nil && validRecords.isEmpty && lineNumber <= 5 {
-                    skippedCount += 1
-                    skippedReason = "헤더 무시됨"
+                    totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
                     continue
                 }
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 형식 오류: \(dateString)"))
@@ -274,8 +276,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 // 수동 매핑 지정 시, 파일 최상단부(헤더)에서 수치 변환 실패 시 조용히 무시
                 if manualConfig != nil && validRecords.isEmpty && lineNumber <= 5 {
-                    skippedCount += 1
-                    skippedReason = "헤더 무시됨"
+                    totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
                     continue
                 }
                 

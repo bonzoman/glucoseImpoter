@@ -186,6 +186,34 @@ struct ContentView: View {
                                     Spacer()
                                 }
                             }
+                        } else {
+                            Section {
+                                Button(action: {
+                                    fetchTargetCount()
+                                }) {
+                                    HStack {
+                                        Spacer()
+                                        Text("삭제 대상 조회")
+                                            .fontWeight(.bold)
+                                        Spacer()
+                                    }
+                                }
+                                
+                                if let count = deleteTargetCount {
+                                    if count == 0 {
+                                        Text("해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다.")
+                                            .foregroundColor(.secondary)
+                                            .font(.subheadline)
+                                            .frame(maxWidth: .infinity, alignment: .center)
+                                            .multilineTextAlignment(.center)
+                                    } else {
+                                        Text("\(count)건의 삭제 대상이 존재합니다.")
+                                            .foregroundColor(.red)
+                                            .font(.subheadline)
+                                            .frame(maxWidth: .infinity, alignment: .center)
+                                    }
+                                }
+                            }
                         }
                     }
                     .navigationTitle("기록 삭제")
@@ -195,16 +223,11 @@ struct ContentView: View {
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("삭제 실행") {
-                                fetchAndCheckTargetCount()
+                                showDeleteConfirm = true
                             }
                             .foregroundColor(.red)
-                            .disabled(isFetchingDeleteCount)
+                            .disabled(deleteTargetCount == nil || deleteTargetCount == 0 || isFetchingDeleteCount)
                         }
-                    }
-                    .alert("삭제 대상 없음", isPresented: $showNoDataAlert) {
-                        Button("확인", role: .cancel) { }
-                    } message: {
-                        Text("해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다.")
                     }
                     .alert("정말 삭제하시겠습니까?", isPresented: $showDeleteConfirm) {
                         Button("취소", role: .cancel) { }
@@ -244,7 +267,7 @@ struct ContentView: View {
         }
     }
     
-    private func fetchAndCheckTargetCount() {
+    private func fetchTargetCount() {
         isFetchingDeleteCount = true
         deleteTargetCount = nil
         // 시작일은 0시 0분, 종료일은 23시 59분으로 보정
@@ -262,11 +285,6 @@ struct ContentView: View {
                 await MainActor.run {
                     self.deleteTargetCount = count
                     self.isFetchingDeleteCount = false
-                    if count == 0 {
-                        self.showNoDataAlert = true
-                    } else {
-                        self.showDeleteConfirm = true
-                    }
                 }
             } catch {
                 await MainActor.run {
