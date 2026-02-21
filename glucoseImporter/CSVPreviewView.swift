@@ -72,12 +72,13 @@ public struct CSVPreviewView: View {
                                     HStack {
                                         Picker("", selection: $selectedDateIndex) {
                                             ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                                Text("\(index) 열: \(sampleColumns[index])").tag(index)
                                             }
                                         }
                                         .pickerStyle(.menu)
                                         Spacer()
                                     }
+                                    .padding(.leading, -12)
                                     
                                     Text("혈당수치")
                                         .font(.subheadline)
@@ -85,12 +86,13 @@ public struct CSVPreviewView: View {
                                     HStack {
                                         Picker("", selection: $selectedValueIndex) {
                                             ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                                Text("\(index) 열: \(sampleColumns[index])").tag(index)
                                             }
                                         }
                                         .pickerStyle(.menu)
                                         Spacer()
                                     }
+                                    .padding(.leading, -12)
                                 }
                                 
                                 Button(action: {

@@ -21,6 +21,7 @@ struct ContentView: View {
     @State private var showDeleteConfirm = false
     @State private var showNoDataAlert = false
     @AppStorage("lastImportBatchID") private var lastImportBatchID: String = ""
+    @AppStorage("lastImportCount") private var lastImportCount: Int = 0
     
     // 권한 및 파일 임포터 State
     @State private var isHealthKitAuthorized = false
@@ -63,7 +64,7 @@ struct ContentView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "arrow.uturn.backward.circle")
-                                    Text("방금 전 업로드한 데이터 일괄 삭제")
+                                    Text("마지막 업로드 한 데이터 \(lastImportCount)건 일괄삭제")
                                 }
                             }
                             .disabled(!isHealthKitAuthorized)
@@ -225,6 +226,7 @@ struct ContentView: View {
             .onChange(of: csvViewModel.lastSavedBatchID) { _, newValue in
                 if let batchID = newValue {
                     lastImportBatchID = batchID
+                    lastImportCount = csvViewModel.lastSavedCount
                 }
             }
             .onChange(of: csvViewModel.parseResult) { _, newResult in
@@ -243,6 +245,7 @@ struct ContentView: View {
                 let deletedCount = try await HealthKitStoreManager.shared.rollbackBatch(batchID: lastImportBatchID)
                 print("🗑️ 롤백 성공: \(deletedCount)건 삭제됨")
                 lastImportBatchID = "" // 롤백 후 비움
+                lastImportCount = 0
             } catch {
                 print("❌ 롤백 실패: \(error.localizedDescription)")
             }
