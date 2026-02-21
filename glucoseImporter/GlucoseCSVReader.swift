@@ -73,21 +73,22 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         var validRecords: [GlucoseRecord] = []
         var invalidRecords: [CSVParseErrorRecord] = []
         
-        var lineNumber = 0
         var detectedVendor: CSVVendorType = .custom
         var detectedUnit: GlucoseUnit = targetUnit ?? .mgDL
-        
         var currentDetection: FormatDetection? = nil
         
-        // 비동기 스트리밍 방식으로 파일 읽기 (메모리 절약)
-        for try await line in url.lines {
+        // 1. 인코딩 처리: UTF-8 시도 후 실패하면 CP949(EUC-KR) 시도
+        let content = try readStringWithEncodings(from: url)
+        let lines = content.components(separatedBy: .newlines)
+        
+        var lineNumber = 0
+        for line in lines {
             lineNumber += 1
             let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedLine.isEmpty else { continue }
             
-            // 1. 헤더 유추 및 포맷 식별 (첫 1~3줄 이내 발생)
+            // 2. 헤더 유추 및 포맷 식별
             if currentDetection == nil {
-                // 이 부분을 더 고도화할 수 있으나, 이번 버전에서는 대표적인 힌트로 분기합니다.
                 let lowerLine = trimmedLine.lowercased()
                 
                 if lowerLine.contains("dexcom") || lowerLine.contains("glucose value (mg/dl)") {
@@ -95,7 +96,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     detectedUnit = .mgDL
                     currentDetection = createDetection(vendor: .dexcom, unit: .mgDL, dateIndex: 1, valueIndex: 7, recordTypeIndex: nil, dateFormat: "yyyy-MM-dd HH:mm:ss")
                     continue
-                } else if lowerLine.contains("freestyle libre") || lowerLine.contains("device") {
+                } else if lowerLine.contains("freestyle libre") || lowerLine.contains("device") || lowerLine.contains("장치") {
                     // Libre는 파일 상단에 헤더 정보와 공백이 존재함. 이 라인은 건너뜀
                     continue
                 } else if lowerLine.contains("historic glucose") || lowerLine.contains("기록 혈당") {
@@ -118,10 +119,10 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     
                     print("✅ [CSVReader] Libre 추출된 인덱스 -> 날짜: \(dateIdx), 기록유형: \(typeIdx ?? -1), 혈당값: \(valIdx)")
                     
+                    // Libre의 경우 날짜 형식이 다양할 수 있으므로, 여기서 감지하거나 범용 포맷터 사용
                     currentDetection = createDetection(vendor: .libre, unit: detectedUnit, dateIndex: dateIdx, valueIndex: valIdx, recordTypeIndex: typeIdx, dateFormat: "yyyy-MM-dd HH:mm", separator: ",") 
                     continue
                 } else if lowerLine.contains("accu-chek") {
-                    // Accu-chek 포맷 매핑
                     detectedVendor = .accuChek
                     detectedUnit = .mgDL
                     currentDetection = createDetection(vendor: .accuChek, unit: .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: "dd.MM.yyyy HH:mm", separator: ";")
@@ -134,7 +135,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                         cf.locale = Locale(identifier: "en_US_POSIX")
                         cf.timeZone = TimeZone.current
                         
-                        let formatsToTest = ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm:ss", "MM/dd/yyyy HH:mm"]
+                        let formatsToTest = ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm:ss", "MM/dd/yyyy HH:mm", "yyyy.MM.dd HH:mm", "yyyy.M.d HH:mm"]
                         var foundFormat: String?
                         for fmt in formatsToTest {
                             cf.dateFormat = fmt
@@ -145,12 +146,10 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                         }
                         
                         if let validFormat = foundFormat, Double(comps[1].trimmingCharacters(in: .whitespacesAndNewlines)) != nil {
-                            // 커스텀 성공
                             detectedVendor = .custom
                             currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: validFormat)
-                            // 헤더가 아니었으므로 해당 라인은 바로 파싱 진행
                         } else {
-                            continue // 아직 헤더쪽이거나 알수없는줄
+                            continue
                         }
                     } else {
                         continue
@@ -163,12 +162,11 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 }
             }
             
-            // 2. 포맷이 인지된 상태에서 데이터 행 파싱
+            // 3. 데이터 행 파싱
             guard let format = currentDetection else { continue }
             
             let components = trimmedLine.split(separator: format.separator, omittingEmptySubsequences: false)
             
-            // 인덱스 안전성 검사
             guard components.count > format.dateColumnIndex, components.count > format.valueColumnIndex else {
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "필수 컬럼 누락"))
                 continue
@@ -177,26 +175,38 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             let dateString = components[format.dateColumnIndex].trimmingCharacters(in: .whitespacesAndNewlines)
             let valueString = components[format.valueColumnIndex].trimmingCharacters(in: .whitespacesAndNewlines)
             
-            guard let date = format.dateFormatter.date(from: dateString) else {
+            // 날짜 파싱 시도 (기본 포맷 먼저, 안되면 추가 포맷 시도)
+            var date = format.dateFormatter.date(from: dateString)
+            if date == nil {
+                let fallbackFormatter = DateFormatter()
+                fallbackFormatter.locale = Locale(identifier: "en_US_POSIX")
+                fallbackFormatter.timeZone = TimeZone.current
+                let fallbackFormats = ["yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm"]
+                for fmt in fallbackFormats {
+                    fallbackFormatter.dateFormat = fmt
+                    if let d = fallbackFormatter.date(from: dateString) {
+                        date = d
+                        break
+                    }
+                }
+            }
+            
+            guard let validDate = date else {
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 형식 오류: \(dateString)"))
                 continue
             }
             
             guard let originalValue = Double(valueString) else {
-                // 수치가 비어있는 경우는 메모, 식사 등의 기록일 수 있음 (에러처리 안하고 스킵할 기록 유형 확인)
                 if let typeIdx = format.recordTypeColumnIndex, components.count > typeIdx {
                     let recordType = components[typeIdx].trimmingCharacters(in: .whitespacesAndNewlines)
-                    // Libre의 경우 "0" (자동스캔) 이나 "1" (스캔) 이 아닌 것은 혈당 기록이 아닌 일상 메모
                     if recordType != "0" && recordType != "1" {
-                        continue // 에러가 아닌 정상적인 스킵 (메모, 식단, 인슐린 등)
+                        continue
                     }
                 }
-                
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "수치 형식 오류 (빈 값 포함): \(valueString)"))
                 continue
             }
             
-            // 수치가 존재하더라도, 기록 유형이 혈당 스캔이 아니면 스킵
             if let typeIdx = format.recordTypeColumnIndex, components.count > typeIdx {
                 let recordType = components[typeIdx].trimmingCharacters(in: .whitespacesAndNewlines)
                 if recordType != "0" && recordType != "1" {
@@ -204,16 +214,14 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 }
             }
             
-            // 자동 단위 변환 로직 (mmol/L -> mg/dL)
             let mgDLValue = format.unit.convertToMgDL(value: originalValue)
             
-            // 이상치(에러값) 식별 (혈당값이 20 미만이거나 600 초과인 경우 에러 처리)
             if mgDLValue < 20.0 || mgDLValue > 600.0 {
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "정상 혈당 범위(20~600) 초과: \(mgDLValue) mg/dL"))
                 continue
             }
             
-            validRecords.append(GlucoseRecord(timestamp: date, value: mgDLValue))
+            validRecords.append(GlucoseRecord(timestamp: validDate, value: mgDLValue))
         }
         
         return CSVParseResult(
@@ -223,6 +231,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             invalidRecords: invalidRecords
         )
     }
+    
     
     private func createDetection(vendor: CSVVendorType, unit: GlucoseUnit, dateIndex: Int, valueIndex: Int, recordTypeIndex: Int?, dateFormat: String, separator: Character = ",") -> FormatDetection {
         let formatter = DateFormatter()
@@ -239,5 +248,34 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             recordTypeColumnIndex: recordTypeIndex,
             separator: separator
         )
+    }
+    
+    /// 인코딩을 자동 감지하거나 여러 인코딩을 시도하여 파일 내용을 읽습니다.
+    private func readStringWithEncodings(from url: URL) throws -> String {
+        let data = try Data(contentsOf: url)
+        
+        // 1. UTF-8 시도
+        if let utf8String = String(data: data, encoding: .utf8) {
+            return utf8String
+        }
+        
+        // 2. CP949 / EUC-KR 시도 (rawValue 0x80000422)
+        let eucKR = String.Encoding(rawValue: 0x80000422)
+        if let eucKRString = String(data: data, encoding: eucKR) {
+            print("✅ [CSVReader] EUC-KR(CP949) 인코딩으로 파일 로드 성공")
+            return eucKRString
+        }
+        
+        // 3. UTF-16 시도
+        if let utf16String = String(data: data, encoding: .utf16) {
+            return utf16String
+        }
+        
+        // 정 실패하면 MacKorean 시도
+        if let macKoreanString = String(data: data, encoding: .macOSRoman) { // 임시
+             return macKoreanString
+        }
+        
+        throw GlucoseCSVReaderError.unsupportedFormat
     }
 }
