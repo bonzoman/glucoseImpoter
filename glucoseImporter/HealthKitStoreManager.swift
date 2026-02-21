@@ -177,6 +177,26 @@ public final class HealthKitStoreManager {
         }
     }
     
+    /// 지정된 날짜 범위 내에서 (이 앱이 생성한) 모든 혈당 데이터를 삭제하기 전 개수를 조회합니다.
+    public func fetchDeleteTargetCount(from startDate: Date, to endDate: Date) async throws -> Int {
+        return try await withCheckedThrowingContinuation { continuation in
+            let datePredicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+            let sourcePredicate = HKQuery.predicateForObjects(withMetadataKey: "ImportSource", allowedValues: ["CSVImporter"])
+            let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, sourcePredicate])
+            
+            let query = HKSampleQuery(sampleType: glucoseType, predicate: compoundPredicate, limit: HKObjectQueryNoLimit, sortDescriptors: nil) { _, samples, error in
+                if let error = error {
+                    continuation.resume(throwing: error)
+                    return
+                }
+                
+                let count = samples?.count ?? 0
+                continuation.resume(returning: count)
+            }
+            healthStore.execute(query)
+        }
+    }
+    
     /// 지정된 날짜 범위 내에서 (이 앱이 생성한) 모든 혈당 데이터를 삭제합니다.
     public func deleteRecords(from startDate: Date, to endDate: Date) async throws -> Int {
         return try await withCheckedThrowingContinuation { continuation in

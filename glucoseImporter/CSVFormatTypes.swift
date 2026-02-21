@@ -45,6 +45,7 @@ public struct CSVParseResult: Equatable {
     public var invalidRecords: [CSVParseErrorRecord]
     public var skippedCount: Int
     public var skippedReason: String?
+    public var totalReadLines: Int // 파싱 시 읽어들인 실제 데이터 행 수
     public var usedDateFormat: String? // 파싱 시 확정되어 사용된 날짜 포맷
 }
 

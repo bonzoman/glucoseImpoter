@@ -16,11 +16,15 @@ struct ContentView: View {
     @State private var deleteStartDate = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
     @State private var deleteEndDate = Date()
     @State private var showDatePicker = false
+    @State private var deleteTargetCount: Int? = nil
+    @State private var isFetchingDeleteCount = false
+    @State private var showDeleteConfirm = false
     @AppStorage("lastImportBatchID") private var lastImportBatchID: String = ""
     
     // 권한 및 파일 임포터 State
     @State private var isHealthKitAuthorized = false
     @State private var showFileImporter = false
+    @State private var isManualMappingMode = false
 
     var body: some View {
         NavigationStack {
@@ -39,13 +43,26 @@ struct ContentView: View {
                 .background(Color(UIColor.secondarySystemBackground))
                 
                 List {
-                    Section(header: Text("데이터 가져오기")) {
+                    Section(header: Text("데이터 가져오기"), footer: Text("지원 포맷 외의 파일을 강제로 열려면 수동 지정 버튼을 사용하세요.")) {
                         Button(action: {
+                            isManualMappingMode = false
                             showFileImporter = true
                         }) {
                             HStack {
                                 Image(systemName: "doc.badge.plus")
-                                Text("CSV 파일 선택 및 업로드")
+                                Text("CSV 파일 선택 및 업로드 (자동 포맷 인식)")
+                                    .fontWeight(.medium)
+                            }
+                        }
+                        .disabled(!isHealthKitAuthorized)
+                        
+                        Button(action: {
+                            isManualMappingMode = true
+                            showFileImporter = true
+                        }) {
+                            HStack {
+                                Image(systemName: "hand.tap")
+                                Text("포맷 수동 지정으로 가져오기")
                                     .fontWeight(.medium)
                             }
                         }
@@ -66,6 +83,7 @@ struct ContentView: View {
                         }
                         
                         Button(role: .destructive, action: {
+                            deleteTargetCount = nil
                             showDatePicker = true
                         }) {
                             HStack {
@@ -108,7 +126,13 @@ struct ContentView: View {
                         try FileManager.default.copyItem(at: url, to: tempURL)
                         url.stopAccessingSecurityScopedResource()
                         
-                        csvViewModel.loadCSV(from: tempURL)
+                        // 강제 수동 모드인지, 자동 인식 모드인지 분기
+                        if isManualMappingMode {
+                            csvViewModel.loadCSVForManualMapping(from: tempURL)
+                        } else {
+                            csvViewModel.loadCSV(from: tempURL)
+                        }
+                        
                         showPreview = true
                     } catch {
                         url.stopAccessingSecurityScopedResource()
@@ -139,21 +163,66 @@ struct ContentView: View {
             .sheet(isPresented: $showDatePicker) {
                 NavigationView {
                     Form {
-                        DatePicker("시작일", selection: $deleteStartDate, displayedComponents: [.date, .hourAndMinute])
-                        DatePicker("종료일", selection: $deleteEndDate, displayedComponents: [.date, .hourAndMinute])
+                        Section(header: Text("기간 설정")) {
+                            DatePicker("시작일", selection: $deleteStartDate, displayedComponents: [.date, .hourAndMinute])
+                                .onChange(of: deleteStartDate) { _, _ in deleteTargetCount = nil }
+                            DatePicker("종료일", selection: $deleteEndDate, displayedComponents: [.date, .hourAndMinute])
+                                .onChange(of: deleteEndDate) { _, _ in deleteTargetCount = nil }
+                        }
+                        
+                        Section {
+                            Button(action: {
+                                fetchTargetCount()
+                            }) {
+                                HStack {
+                                    Spacer()
+                                    if isFetchingDeleteCount {
+                                        ProgressView().progressViewStyle(CircularProgressViewStyle())
+                                    } else {
+                                        Text("삭제 대상 조회")
+                                            .fontWeight(.bold)
+                                    }
+                                    Spacer()
+                                }
+                            }
+                            .disabled(isFetchingDeleteCount)
+                            
+                            if let count = deleteTargetCount {
+                                if count == 0 {
+                                    Text("해당 기간에 이 앱으로 저장된 데이터가 없습니다.")
+                                        .foregroundColor(.secondary)
+                                        .font(.subheadline)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                } else {
+                                    Text("\(count)건의 삭제 대상이 있습니다.")
+                                        .foregroundColor(.red)
+                                        .font(.subheadline)
+                                        .frame(maxWidth: .infinity, alignment: .center)
+                                }
+                            }
+                        }
                     }
-                    .navigationTitle("삭제할 기간 선택")
+                    .navigationTitle("기록 삭제")
                     .toolbar {
                         ToolbarItem(placement: .navigationBarLeading) {
                             Button("취소") { showDatePicker = false }
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("삭제 실행", role: .destructive) {
-                                deleteByDateRange()
-                                showDatePicker = false
+                            Button("삭제 실행") {
+                                showDeleteConfirm = true
                             }
                             .foregroundColor(.red)
+                            .disabled(deleteTargetCount == nil || deleteTargetCount == 0 || isFetchingDeleteCount)
                         }
+                    }
+                    .alert("정말 삭제하시겠습니까?", isPresented: $showDeleteConfirm) {
+                        Button("취소", role: .cancel) { }
+                        Button("삭제", role: .destructive) {
+                            deleteByDateRange()
+                            showDatePicker = false
+                        }
+                    } message: {
+                        Text("\(deleteTargetCount ?? 0)건의 데이터가 HealthKit에서 영구적으로 삭제됩니다. 계속하시겠습니까?")
                     }
                 }
             }
@@ -180,6 +249,25 @@ struct ContentView: View {
                 lastImportBatchID = "" // 롤백 후 비움
             } catch {
                 print("❌ 롤백 실패: \(error.localizedDescription)")
+            }
+        }
+    }
+    
+    private func fetchTargetCount() {
+        isFetchingDeleteCount = true
+        deleteTargetCount = nil
+        Task {
+            do {
+                let count = try await HealthKitStoreManager.shared.fetchDeleteTargetCount(from: deleteStartDate, to: deleteEndDate)
+                await MainActor.run {
+                    self.deleteTargetCount = count
+                    self.isFetchingDeleteCount = false
+                }
+            } catch {
+                await MainActor.run {
+                    self.isFetchingDeleteCount = false
+                    print("❌ 삭제 카운트 조회 실패: \(error.localizedDescription)")
+                }
             }
         }
     }

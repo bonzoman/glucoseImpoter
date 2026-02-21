@@ -94,11 +94,13 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         print("📄 [CSVReader] 파일 읽기 시작 (총 \(lines.count)줄)")
         
         var lineNumber = 0
+        var totalReadLines = 0
         for line in lines {
             lineNumber += 1
             // \r 찌꺼기 제거 및 공백 트림
             let trimmedLine = line.replacingOccurrences(of: "\r", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedLine.isEmpty else { continue }
+            totalReadLines += 1
             
             // --- Libre 고정 파싱 분기 ---
             let isLibreRow = trimmedLine.lowercased().hasPrefix("freestyle libre") || trimmedLine.lowercased().hasPrefix("freestylelibre")
@@ -289,6 +291,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             invalidRecords: invalidRecords,
             skippedCount: skippedCount,
             skippedReason: skippedReason,
+            totalReadLines: totalReadLines,
             usedDateFormat: determinedDateFormat
         )
     }

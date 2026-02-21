@@ -30,7 +30,7 @@ public struct CSVPreviewView: View {
                             Text("총 검증 결과")
                             Spacer()
                             VStack(alignment: .trailing, spacing: 4) {
-                                Text("총 \(result.validRecords.count + result.invalidRecords.count)건 (성공 \(result.validRecords.count)건 / 오류 \(result.invalidRecords.count)건)")
+                                Text("총 \(result.totalReadLines)건 (성공 \(result.validRecords.count)건 / skip \(result.skippedCount)건 / 오류 \(result.invalidRecords.count)건)")
                                     .foregroundColor(result.invalidRecords.isEmpty ? .secondary : .red)
                                 if result.skippedCount > 0 {
                                     Text("\(result.skippedCount)건 skip 처리됨 (사유: \(result.skippedReason ?? "알 수 없음"))")

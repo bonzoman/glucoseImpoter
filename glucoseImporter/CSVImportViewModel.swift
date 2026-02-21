@@ -76,6 +76,22 @@ public final class CSVImportViewModel: ObservableObject {
         }
     }
     
+    /// 자동 유추를 거치지 않고, 무조건 수동 매핑 창을 띄웁니다.
+    public func loadCSVForManualMapping(from url: URL) {
+        lastLoadedURL = url
+        Task {
+            isImporting = true
+            errorMessage = nil
+            
+            await extractPreviewLines(from: url)
+            
+            await MainActor.run {
+                self.showManualMapping = true
+                self.isImporting = false
+            }
+        }
+    }
+    
     private func extractPreviewLines(from url: URL) async {
         do {
             let data = try Data(contentsOf: url)
