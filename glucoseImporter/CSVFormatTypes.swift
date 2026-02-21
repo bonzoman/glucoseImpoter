@@ -43,4 +43,18 @@ public struct CSVParseResult: Equatable {
     public let originalUnit: GlucoseUnit
     public var validRecords: [GlucoseRecord]
     public var invalidRecords: [CSVParseErrorRecord]
+    public var usedDateFormat: String? // 파싱 시 확정되어 사용된 날짜 포맷
+}
+
+/// 사용자가 직접 지정하는 수동 CSV 파싱 명세
+public struct ManualCSVFormat: Equatable {
+    public let dateColumnIndex: Int
+    public let valueColumnIndex: Int
+    public let dateFormat: String
+    
+    public init(dateColumnIndex: Int, valueColumnIndex: Int, dateFormat: String) {
+        self.dateColumnIndex = dateColumnIndex
+        self.valueColumnIndex = valueColumnIndex
+        self.dateFormat = dateFormat
+    }
 }

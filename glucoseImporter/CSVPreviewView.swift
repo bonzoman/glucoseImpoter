@@ -9,7 +9,9 @@ public struct CSVPreviewView: View {
     
     public var body: some View {
         VStack {
-            if let result = viewModel.parseResult {
+            if viewModel.showManualMapping {
+                ManualMappingView(viewModel: viewModel)
+            } else if let result = viewModel.parseResult {
                 List {
                     Section(header: Text("파일 정보")) {
                         HStack {
@@ -27,7 +29,7 @@ public struct CSVPreviewView: View {
                         HStack {
                             Text("총 검증 결과")
                             Spacer()
-                            Text("성공 \(result.validRecords.count)건 / 오류 \(result.invalidRecords.count)건")
+                            Text("총 \(result.validRecords.count + result.invalidRecords.count)건 (성공 \(result.validRecords.count)건 / 오류 \(result.invalidRecords.count)건)")
                                 .foregroundColor(result.invalidRecords.isEmpty ? .secondary : .red)
                         }
                     }
@@ -48,7 +50,11 @@ public struct CSVPreviewView: View {
                                 VStack(alignment: .leading, spacing: 12) {
                                     // 헤더(Header) 행
                                     HStack(spacing: 16) {
-                                        Text("측정 일시").frame(width: 160, alignment: .leading)
+                                        if let format = viewModel.usedDateFormat {
+                                            Text("측정 일시 (\(format))").frame(width: 200, alignment: .leading)
+                                        } else {
+                                            Text("측정 일시").frame(width: 160, alignment: .leading)
+                                        }
                                         Text("혈당 수치").frame(width: 80, alignment: .trailing)
                                         Text("단위").frame(width: 60, alignment: .leading)
                                     }
@@ -61,7 +67,7 @@ public struct CSVPreviewView: View {
                                     ForEach(viewModel.previewRecords) { record in
                                         HStack(spacing: 16) {
                                             Text("\(record.timestamp.formatted())")
-                                                .frame(width: 160, alignment: .leading)
+                                                .frame(width: viewModel.usedDateFormat != nil ? 200 : 160, alignment: .leading)
                                             Text(String(format: "%.1f", record.value))
                                                 .bold()
                                                 .frame(width: 80, alignment: .trailing)
@@ -71,6 +77,13 @@ public struct CSVPreviewView: View {
                                         }
                                         .font(.subheadline)
                                         Divider()
+                                    }
+                                    
+                                    if result.validRecords.count > 100 {
+                                        Text("+ \(result.validRecords.count - 100)건이 더 있습니다.")
+                                            .font(.caption)
+                                            .foregroundColor(.blue)
+                                            .padding(.top, 4)
                                     }
                                 }
                                 .padding(.vertical, 8)
@@ -102,16 +115,21 @@ public struct CSVPreviewView: View {
                                                     .frame(width: 50, alignment: .leading)
                                                     .foregroundColor(.secondary)
                                                 Text(error.reason)
-                                                    .frame(width: 150, alignment: .leading)
+                                                    .frame(width: 180, alignment: .leading)
                                                     .foregroundColor(.red)
                                                 Text(error.rawLine)
-                                                    .frame(width: 300, alignment: .leading)
+                                                    .frame(width: 400, alignment: .leading)
                                                     .foregroundColor(.secondary)
-                                                    .lineLimit(1)
-                                                    .truncationMode(.tail)
                                             }
-                                            .font(.caption)
+                                            .font(.caption.monospaced())
                                             Divider()
+                                        }
+                                        
+                                        if result.invalidRecords.count > 100 {
+                                            Text("+ \(result.invalidRecords.count - 100)건의 오류가 더 있습니다.")
+                                                .font(.caption)
+                                                .foregroundColor(.blue)
+                                                .padding(.top, 4)
                                         }
                                     }
                                     .padding(.vertical, 8)

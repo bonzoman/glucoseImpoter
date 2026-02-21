@@ -5,7 +5,18 @@ import Combine
 public final class CSVImportViewModel: ObservableObject {
     @Published public var parseResult: CSVParseResult? = nil
     @Published public var isImporting = false
+    @Published var isLoading: Bool = false
     @Published public var errorMessage: String? = nil
+    
+    // 포맷/건수 정보
+    @Published var usedDateFormat: String? = nil
+    @Published var detectedVendor: CSVVendorType? = nil
+    @Published var validRecords: [GlucoseRecord] = []
+    @Published var invalidRecords: [CSVParseErrorRecord] = []
+    
+    var totalRecordsCount: Int {
+        return validRecords.count + invalidRecords.count
+    }
     
     // UI 표시용 상태
     @Published public var previewRecords: [GlucoseRecord] = []
@@ -23,20 +34,84 @@ public final class CSVImportViewModel: ObservableObject {
     @Published public var selectedTab: Int = 0 // 0: 성공건, 1: 오류건
     @Published public var showSaveConfirmation = false
     
+    // 수동 매핑 상태
+    @Published public var showManualMapping = false
+    @Published public var manualMappingPreviewLines: [String] = []
+    public var lastLoadedURL: URL? = nil
+    
     public init() {}
     
     public func loadCSV(from url: URL) {
+        lastLoadedURL = url
         Task {
             isImporting = true
             errorMessage = nil
             do {
                 let reader = GlucoseCSVReader()
-                let result = try await reader.read(from: url)
+                let result = try await reader.read(from: url, targetUnit: .mgDL)
                 
-                self.parseResult = result
-                // 미리보기는 최대 100건까지만 노출
-                self.previewRecords = Array(result.validRecords.prefix(100))
+                await MainActor.run {
+                    self.parseResult = result
+                    self.detectedVendor = result.vendor
+                    self.validRecords = result.validRecords
+                    self.invalidRecords = result.invalidRecords
+                    self.usedDateFormat = result.usedDateFormat
+                    self.isLoading = false
+                    
+                    // 미리보기는 최대 100건까지만 노출
+                    self.previewRecords = Array(result.validRecords.prefix(100))
+                }
+            } catch {
+                if let readerError = error as? GlucoseCSVReaderError, case .unsupportedFormat = readerError {
+                    await extractPreviewLines(from: url)
+                    await MainActor.run {
+                        self.showManualMapping = true
+                        self.errorMessage = "지원되지 않는 파일 포맷입니다. 자동 인식에 실패하여 수동 매핑을 진행합니다."
+                    }
+                } else {
+                    self.errorMessage = error.localizedDescription
+                }
+            }
+            isImporting = false
+        }
+    }
+    
+    private func extractPreviewLines(from url: URL) async {
+        do {
+            let data = try Data(contentsOf: url)
+            let content = String(decoding: data, as: UTF8.self)
+            let lines = content.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
+            
+            await MainActor.run {
+                self.manualMappingPreviewLines = Array(lines.prefix(5))
+            }
+        } catch {
+            await MainActor.run {
+                self.manualMappingPreviewLines = ["미리보기를 불러올 수 없습니다."]
+            }
+        }
+    }
+    
+    public func applyManualMapping(config: ManualCSVFormat) {
+        guard let url = lastLoadedURL else { return }
+        Task {
+            isImporting = true
+            errorMessage = nil
+            do {
+                let reader = GlucoseCSVReader()
+                let result = try await reader.read(from: url, targetUnit: .mgDL, manualConfig: config)
                 
+                await MainActor.run {
+                    self.parseResult = result
+                    self.detectedVendor = result.vendor
+                    self.validRecords = result.validRecords
+                    self.invalidRecords = result.invalidRecords
+                    self.usedDateFormat = result.usedDateFormat
+                    self.isLoading = false
+                    
+                    self.previewRecords = Array(result.validRecords.prefix(100))
+                    self.showManualMapping = false
+                }
             } catch {
                 self.errorMessage = error.localizedDescription
             }

@@ -43,7 +43,7 @@ public enum GlucoseCSVReaderError: Error, LocalizedError {
 
 /// 테스트 용이성(Mocking)을 위한 프로토콜 정의
 public protocol GlucoseCSVReading {
-    func read(from url: URL, targetUnit: GlucoseUnit?) async throws -> CSVParseResult
+    func read(from url: URL, targetUnit: GlucoseUnit?, manualConfig: ManualCSVFormat?) async throws -> CSVParseResult
 }
 
 // MARK: - Reader Implementation
@@ -68,8 +68,9 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
     /// - Parameters:
     ///   - url: CSV 파일의 로컬 URL 경로
     ///   - targetUnit: 강제할 수치 단위 (nil이면 헤더를 기반으로 자동 유추)
+    ///   - manualConfig: 수동 매핑 설정 (제공 시 자동 감지 생략)
     /// - Returns: 안전하게 파싱된 `CSVParseResult` (성공/실패 분리)
-    public func read(from url: URL, targetUnit: GlucoseUnit? = nil) async throws -> CSVParseResult {
+    public func read(from url: URL, targetUnit: GlucoseUnit? = nil, manualConfig: ManualCSVFormat? = nil) async throws -> CSVParseResult {
         var validRecords: [GlucoseRecord] = []
         var invalidRecords: [CSVParseErrorRecord] = []
         
@@ -77,6 +78,12 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         var detectedUnit: GlucoseUnit = targetUnit ?? .mgDL
         var currentDetection: FormatDetection? = nil
         var isLibreFormat = false
+        var determinedDateFormat: String? = nil
+        
+        if let config = manualConfig {
+            detectedVendor = .custom
+            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: config.dateColumnIndex, valueIndex: config.valueColumnIndex, recordTypeIndex: nil, dateFormat: config.dateFormat)
+        }
         
         // 1. 인코딩 처리: UTF-8 시도 후 실패하면 CP949(EUC-KR) 시도, 정 안되면 Lossy UTF8
         let content = try readStringWithEncodings(from: url)
@@ -92,7 +99,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             
             // --- Libre 고정 파싱 분기 ---
             let isLibreRow = trimmedLine.lowercased().hasPrefix("freestyle libre") || trimmedLine.lowercased().hasPrefix("freestylelibre")
-            if isLibreRow {
+            if isLibreRow && currentDetection == nil {
                 isLibreFormat = true
                 detectedVendor = .libre
                 
@@ -107,9 +114,10 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 let dateString = components[2].trimmingCharacters(in: .whitespacesAndNewlines)
                 let recordType = components[3].trimmingCharacters(in: .whitespacesAndNewlines)
                 
-                // 기록 유형(0 또는 1) 필터링
+                // 기록 유형(0 또는 1) 필터링 (그 외의 데이터는 예외 명시 후 스킵)
                 if recordType != "0" && recordType != "1" {
-                    continue // 에러 처리 없이 스킵
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "리브레 예외 데이터(무시됨)"))
+                    continue
                 }
                 
                 // 날짜 파싱
@@ -122,6 +130,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     fallbackFormatter.dateFormat = fmt
                     if let d = fallbackFormatter.date(from: dateString) {
                         date = d
+                        determinedDateFormat = fmt
                         break
                     }
                 }
@@ -220,7 +229,9 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             
             // 날짜 파싱 시도 (기본 포맷 먼저, 안되면 추가 포맷 시도)
             var date = format.dateFormatter.date(from: dateString)
-            if date == nil {
+            if date != nil {
+                determinedDateFormat = format.dateFormatter.dateFormat
+            } else {
                 let fallbackFormatter = DateFormatter()
                 fallbackFormatter.locale = Locale(identifier: "en_US_POSIX")
                 fallbackFormatter.timeZone = TimeZone.current
@@ -229,6 +240,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     fallbackFormatter.dateFormat = fmt
                     if let d = fallbackFormatter.date(from: dateString) {
                         date = d
+                        determinedDateFormat = fmt
                         break
                     }
                 }
@@ -263,7 +275,6 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "정상 혈당 범위(20~600) 초과: \(mgDLValue) mg/dL"))
                 continue
             }
-            
             validRecords.append(GlucoseRecord(timestamp: validDate, value: mgDLValue))
         }
         
@@ -271,10 +282,12 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             vendor: detectedVendor,
             originalUnit: detectedUnit,
             validRecords: validRecords,
-            invalidRecords: invalidRecords
+            invalidRecords: invalidRecords,
+            usedDateFormat: determinedDateFormat
         )
     }
     
+    // 이 위치에 read()를 닫는 괄호 추가!
     
     private func createDetection(vendor: CSVVendorType, unit: GlucoseUnit, dateIndex: Int, valueIndex: Int, recordTypeIndex: Int?, dateFormat: String, separator: Character = ",") -> FormatDetection {
         let formatter = DateFormatter()
