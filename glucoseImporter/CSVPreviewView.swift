@@ -69,22 +69,28 @@ public struct CSVPreviewView: View {
                                     Text("측정일시")
                                         .font(.subheadline)
                                         .foregroundColor(.primary)
-                                    Picker("", selection: $selectedDateIndex) {
-                                        ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                            Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                    HStack {
+                                        Picker("", selection: $selectedDateIndex) {
+                                            ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                            }
                                         }
+                                        .pickerStyle(.menu)
+                                        Spacer()
                                     }
-                                    .pickerStyle(.menu)
                                     
                                     Text("혈당수치")
                                         .font(.subheadline)
                                         .foregroundColor(.primary)
-                                    Picker("", selection: $selectedValueIndex) {
-                                        ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                            Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                    HStack {
+                                        Picker("", selection: $selectedValueIndex) {
+                                            ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                            }
                                         }
+                                        .pickerStyle(.menu)
+                                        Spacer()
                                     }
-                                    .pickerStyle(.menu)
                                 }
                                 
                                 Button(action: {
@@ -257,6 +263,21 @@ public struct CSVPreviewView: View {
             }
         } message: {
             Text("\(viewModel.lastSavedCount)건의 데이터가 안전하게 저장되었습니다.")
+        }
+        .alert(
+            "오류 발생",
+            isPresented: Binding<Bool>(
+                get: { viewModel.errorMessage != nil },
+                set: { if !$0 { viewModel.errorMessage = nil } }
+            )
+        ) {
+            Button("확인", role: .cancel) {
+                viewModel.errorMessage = nil
+            }
+        } message: {
+            if let errorMessage = viewModel.errorMessage {
+                Text(errorMessage)
+            }
         }
     }
     

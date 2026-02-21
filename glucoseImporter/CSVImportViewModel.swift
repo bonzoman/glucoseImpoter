@@ -90,6 +90,10 @@ public final class CSVImportViewModel: ObservableObject {
                     
                     self.previewRecords = Array(result.validRecords.prefix(100))
                     self.showManualMapping = false
+                    
+                    if result.validRecords.isEmpty {
+                        self.errorMessage = "파싱 가능한 정상 데이터가 0건입니다. 매핑 열을 잘못 지정했거나 파일 내용에 문제가 없는지(숫자 필드 등) 다시 확인해주세요."
+                    }
                 }
             } catch {
                 self.errorMessage = error.localizedDescription
@@ -140,6 +144,7 @@ public final class CSVImportViewModel: ObservableObject {
                 print("저장 완료: \(savedCount)건 (Strategy: \(strategy), Batch: \(batchID))")
                 
                 // 저장 성공 후 UI 및 상태 데이터 업데이트
+                self.lastSavedBatchID = batchID
                 self.lastSavedCount = savedCount
                 self.showSaveSuccessAlert = true
             } catch {
