@@ -1,0 +1,4 @@
+# AI Rules
+- **Crucial Rule**: Always communicate and reply to the user in **Korean (한국어)** in the chat, regardless of the language the user uses.
+- Make sure to write all artifacts (task.md, implementation_plan.md, walkthrough.md, etc.), tasks, and plans in **Korean (한국어)**.
+- 사용자와의 대화뿐만 아니라 내부적인 계획(Plan) 및 체크리스트 문서(Task)도 모두 한국어로 작성할 것.
