@@ -139,7 +139,7 @@ public final class HealthKitStoreManager {
         }
         
         // 해당 기간의 데이터가 1건이라도 있는지 로드
-        let existingSamples = try await fetchExistingSamples(from: startDate, to: endDate)
+        let existingSamples = try await fetchExistingSamples(from: startDate, to: endDate.addingTimeInterval(1))
         return !existingSamples.isEmpty
     }
     
@@ -180,7 +180,7 @@ public final class HealthKitStoreManager {
     /// 지정된 날짜 범위 내에서 (이 앱이 생성한) 모든 혈당 데이터를 삭제하기 전 개수를 조회합니다.
     public func fetchDeleteTargetCount(from startDate: Date, to endDate: Date) async throws -> Int {
         return try await withCheckedThrowingContinuation { continuation in
-            let datePredicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+            let datePredicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate.addingTimeInterval(1), options: .strictStartDate)
             let sourcePredicate = HKQuery.predicateForObjects(withMetadataKey: "ImportSource", allowedValues: ["CSVImporter"])
             let compoundPredicate = NSCompoundPredicate(andPredicateWithSubpredicates: [datePredicate, sourcePredicate])
             
@@ -201,7 +201,7 @@ public final class HealthKitStoreManager {
     public func deleteRecords(from startDate: Date, to endDate: Date) async throws -> Int {
         return try await withCheckedThrowingContinuation { continuation in
             // 1. 기간 조건
-            let datePredicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+            let datePredicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate.addingTimeInterval(1), options: .strictStartDate)
             // 2. 이 앱에서 넣은 데이터인지 확인하는 조건 (메타데이터 브랜딩 일치 여부)
             let sourcePredicate = HKQuery.predicateForObjects(withMetadataKey: "ImportSource", allowedValues: ["CSVImporter"])
             
@@ -239,7 +239,7 @@ public final class HealthKitStoreManager {
     /// 지정된 기간 사이의 기존 혈당 데이터를 가져옵니다. (중복 검사용)
     private func fetchExistingSamples(from startDate: Date, to endDate: Date) async throws -> [HKQuantitySample] {
         return try await withCheckedThrowingContinuation { continuation in
-            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate, options: .strictStartDate)
+            let predicate = HKQuery.predicateForSamples(withStart: startDate, end: endDate.addingTimeInterval(1), options: .strictStartDate)
             
             let sortDescriptor = NSSortDescriptor(key: HKSampleSortIdentifierStartDate, ascending: true)
             

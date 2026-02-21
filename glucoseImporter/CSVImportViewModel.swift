@@ -141,8 +141,6 @@ public final class CSVImportViewModel: ObservableObject {
                 
                 // 저장 성공 후 UI 및 상태 데이터 업데이트
                 self.lastSavedCount = savedCount
-                self.parseResult = nil
-                self.previewRecords = []
                 self.showSaveSuccessAlert = true
             } catch {
                 self.errorMessage = error.localizedDescription

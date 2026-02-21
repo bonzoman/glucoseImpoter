@@ -232,25 +232,24 @@ public struct CSVPreviewView: View {
                 extractSampleColumns()
             }
         }
-        .confirmationDialog("HealthKit에 데이터 저장", isPresented: $viewModel.showSaveConfirmation, titleVisibility: .visible) {
+        .alert("HealthKit에 데이터 저장", isPresented: $viewModel.showSaveConfirmation) {
+            Button("취소", role: .cancel) { }
             Button("저장 실행") {
                 viewModel.startHealthKitSave()
             }
-            Button("취소", role: .cancel) { }
         } message: {
             Text("검증이 통과된 \(viewModel.previewRecords.count)건의 데이터를 HealthKit에 덮어쓰기 권한으로 기록하시겠습니까?")
         }
-        .alert(isPresented: $viewModel.showDuplicateAlert) {
-            Alert(
-                title: Text("중복 데이터 발견"),
-                message: Text("선택한 기간에 이미 저장된 혈당 데이터가 있습니다. 기존 데이터를 지우고 덮어쓰시겠습니까, 아니면 새로운 데이터만 추가로 저장하시겠습니까?"),
-                primaryButton: .destructive(Text("기존 데이터 덮어쓰기")) {
-                    viewModel.saveToHealthKit(strategy: .overwrite)
-                },
-                secondaryButton: .default(Text("새로운 데이터만 추가(건너뛰기)")) {
-                    viewModel.saveToHealthKit(strategy: .skip)
-                }
-            )
+        .alert("중복 데이터 발견", isPresented: $viewModel.showDuplicateAlert) {
+            Button("기존 데이터 덮어쓰기", role: .destructive) {
+                viewModel.saveToHealthKit(strategy: .overwrite)
+            }
+            Button("새로운 데이터만 추가") {
+                viewModel.saveToHealthKit(strategy: .skip)
+            }
+            Button("취소", role: .cancel) { }
+        } message: {
+            Text("선택한 기간에 이미 저장된 혈당 데이터가 있습니다. 기존 데이터를 지우고 덮어쓰시겠습니까, 아니면 새로운 데이터만 추가로 저장하시겠습니까?")
         }
         .alert("저장 완료", isPresented: $viewModel.showSaveSuccessAlert) {
             Button("확인", role: .cancel) { 
