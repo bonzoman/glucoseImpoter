@@ -112,7 +112,11 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 // 요구된 인덱스 규칙 준수를 위한 최소 컬럼 개수 확인 (스캔혈당은 인덱스 5)
                 guard components.count >= 6 else {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Libre 데이터 컬럼 부족 (최소 6개 필요)"))
+                    if lineNumber <= 5 {
+                        totalReadLines -= 1 // 헤더 행 무시
+                    } else {
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Libre 데이터 컬럼 부족 (최소 6개 필요)"))
+                    }
                     continue
                 }
                 
@@ -142,7 +146,11 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 }
                 
                 guard let validDate = date else {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 파싱 실패: \(dateString)"))
+                    if lineNumber <= 5 {
+                        totalReadLines -= 1
+                    } else {
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 파싱 실패: \(dateString)"))
+                    }
                     continue
                 }
                 
@@ -151,7 +159,11 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 let valueString = components[valueIndex].trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 guard !valueString.isEmpty, let value = Double(valueString) else {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): \(valueString)"))
+                    if lineNumber <= 5 {
+                        totalReadLines -= 1
+                    } else {
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): \(valueString)"))
+                    }
                     continue
                 }
                 
@@ -163,6 +175,12 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 validRecords.append(GlucoseRecord(timestamp: validDate, value: value))
                 continue // Libre 파싱 스코프 완료
+            } else if isLibreFormat {
+                // 상단 헤더행 중 시작 문구가 'Freestyle Libre'가 아닌 행(예: '이름,홍길동') 배제
+                if lineNumber <= 5 {
+                    totalReadLines -= 1
+                    continue
+                }
             }
             // --- Libre 고정 파싱 분기 종료 ---
             
