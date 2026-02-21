@@ -36,8 +36,11 @@ public final class CSVImportViewModel: ObservableObject {
     
     // 수동 매핑 상태
     @Published public var showManualMapping = false
-    @Published public var manualMappingPreviewLines: [String] = []
     public var lastLoadedURL: URL? = nil
+    
+    // 저장 성공 상태 
+    @Published public var showSaveSuccessAlert = false
+    @Published public var lastSavedCount = 0
     
     public init() {}
     
@@ -62,49 +65,9 @@ public final class CSVImportViewModel: ObservableObject {
                     self.previewRecords = Array(result.validRecords.prefix(100))
                 }
             } catch {
-                if let readerError = error as? GlucoseCSVReaderError, case .unsupportedFormat = readerError {
-                    await extractPreviewLines(from: url)
-                    await MainActor.run {
-                        self.showManualMapping = true
-                        self.errorMessage = "지원되지 않는 파일 포맷입니다. 자동 인식에 실패하여 수동 매핑을 진행합니다."
-                    }
-                } else {
-                    self.errorMessage = error.localizedDescription
-                }
+                self.errorMessage = error.localizedDescription
             }
             isImporting = false
-        }
-    }
-    
-    /// 자동 유추를 거치지 않고, 무조건 수동 매핑 창을 띄웁니다.
-    public func loadCSVForManualMapping(from url: URL) {
-        lastLoadedURL = url
-        Task {
-            isImporting = true
-            errorMessage = nil
-            
-            await extractPreviewLines(from: url)
-            
-            await MainActor.run {
-                self.showManualMapping = true
-                self.isImporting = false
-            }
-        }
-    }
-    
-    private func extractPreviewLines(from url: URL) async {
-        do {
-            let data = try Data(contentsOf: url)
-            let content = String(decoding: data, as: UTF8.self)
-            let lines = content.components(separatedBy: .newlines).filter { !$0.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty }
-            
-            await MainActor.run {
-                self.manualMappingPreviewLines = Array(lines.prefix(5))
-            }
-        } catch {
-            await MainActor.run {
-                self.manualMappingPreviewLines = ["미리보기를 불러올 수 없습니다."]
-            }
         }
     }
     
@@ -176,11 +139,11 @@ public final class CSVImportViewModel: ObservableObject {
                 let (savedCount, batchID) = try await HealthKitStoreManager.shared.saveGlucoseRecords(result.validRecords, strategy: strategy)
                 print("저장 완료: \(savedCount)건 (Strategy: \(strategy), Batch: \(batchID))")
                 
-                self.lastSavedBatchID = batchID
-                
-                // 저장 성공 후 초기화
+                // 저장 성공 후 UI 및 상태 데이터 업데이트
+                self.lastSavedCount = savedCount
                 self.parseResult = nil
                 self.previewRecords = []
+                self.showSaveSuccessAlert = true
             } catch {
                 self.errorMessage = error.localizedDescription
             }

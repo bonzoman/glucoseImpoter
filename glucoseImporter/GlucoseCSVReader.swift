@@ -167,7 +167,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             // --- Libre 고정 파싱 분기 종료 ---
             
             // 비-Libre 벤더의 헤더 감지 로직
-            if !isLibreFormat && currentDetection == nil {
+            if !isLibreFormat && currentDetection == nil && detectedVendor != .custom {
                 let lowerLine = trimmedLine.lowercased().replacingOccurrences(of: " ", with: "")
                 print("🔍 [CSVReader] L\(lineNumber) 감지: \(trimmedLine)")
                 
@@ -216,15 +216,22 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     }
                 } else {
                     if lineNumber > 20 && currentDetection == nil {
-                        throw GlucoseCSVReaderError.unsupportedFormat
+                        // 에러를 던지지 않고 Custom 포맷으로 전환하여 계속 파싱(실패 처리) 유도
+                        detectedVendor = .custom
+                    } else {
+                        totalReadLines -= 1 // 포맷 감지 전의 기타 불필요 구문으로 간주
+                        continue
                     }
-                    totalReadLines -= 1 // 포맷 감지 전의 기타 불필요 구문으로 간주
-                    continue
                 }
             }
             
             // 기존 FormatDetection 기반 벤더 (Dexcom, AccuChek, Custom) 파싱 수행
-            guard let format = currentDetection, !isLibreFormat else { continue }
+            guard let format = currentDetection, !isLibreFormat else {
+                if !isLibreFormat {
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "포맷을 알 수 없어 파싱 불가"))
+                }
+                continue 
+            }
             
             let components = trimmedLine.split(separator: format.separator, omittingEmptySubsequences: false)
             

@@ -3,15 +3,20 @@ import SwiftUI
 public struct CSVPreviewView: View {
     @ObservedObject var viewModel: CSVImportViewModel
     
+    @Environment(\.presentationMode) var presentationMode
+    
+    // 수동 매핑 UI용 State
+    @State private var selectedDateIndex: Int = 0
+    @State private var selectedValueIndex: Int = 1
+    @State private var sampleColumns: [String] = []
+    
     public init(viewModel: CSVImportViewModel) {
         self.viewModel = viewModel
     }
     
     public var body: some View {
         VStack {
-            if viewModel.showManualMapping {
-                ManualMappingView(viewModel: viewModel)
-            } else if let result = viewModel.parseResult {
+            if let result = viewModel.parseResult {
                 List {
                     Section(header: Text("파일 정보")) {
                         HStack {
@@ -41,6 +46,60 @@ public struct CSVPreviewView: View {
                         }
                     }
                     
+                    if result.vendor == .custom || viewModel.showManualMapping {
+                        Section(header: Text("알 수 없는 포맷 감지됨")) {
+                            VStack(alignment: .leading, spacing: 16) {
+                                Text("아래 데이터 열(Column)을 데이터 타입에 맞게 매핑해 주세요.")
+                                    .font(.subheadline)
+                                    .foregroundColor(.secondary)
+                                
+                                if sampleColumns.isEmpty {
+                                    Text("데이터를 불러올 수 없습니다.")
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    HStack {
+                                        Text("측정일시")
+                                            .font(.subheadline)
+                                        Spacer()
+                                        Picker("측정 일시 열 선택", selection: $selectedDateIndex) {
+                                            ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                            }
+                                        }
+                                        .pickerStyle(.menu)
+                                    }
+                                    
+                                    HStack {
+                                        Text("혈당수치")
+                                            .font(.subheadline)
+                                        Spacer()
+                                        Picker("혈당 수치 열 선택", selection: $selectedValueIndex) {
+                                            ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
+                                            }
+                                        }
+                                        .pickerStyle(.menu)
+                                    }
+                                }
+                                
+                                Button(action: {
+                                    let config = ManualCSVFormat(dateColumnIndex: selectedDateIndex, valueColumnIndex: selectedValueIndex, dateFormat: nil)
+                                    viewModel.applyManualMapping(config: config)
+                                }) {
+                                    HStack {
+                                        Spacer()
+                                        Text("수동 포맷으로 파싱 시도")
+                                            .bold()
+                                        Spacer()
+                                    }
+                                }
+                                .padding(.vertical, 8)
+                                .disabled(sampleColumns.isEmpty || viewModel.isImporting || selectedDateIndex == selectedValueIndex)
+                            }
+                            .padding(.vertical, 4)
+                        }
+                    }
+                    
                     Section {
                         Picker("필터", selection: $viewModel.selectedTab) {
                             Text("성공 (\(result.validRecords.count))").tag(0)
@@ -57,11 +116,7 @@ public struct CSVPreviewView: View {
                                 VStack(alignment: .leading, spacing: 12) {
                                     // 헤더(Header) 행
                                     HStack(spacing: 16) {
-                                        if let format = viewModel.usedDateFormat {
-                                            Text("측정 일시 (\(format))").frame(width: 200, alignment: .leading)
-                                        } else {
-                                            Text("측정 일시").frame(width: 160, alignment: .leading)
-                                        }
+                                        Text("측정 일시").frame(width: 160, alignment: .leading)
                                         Text("혈당 수치").frame(width: 80, alignment: .trailing)
                                         Text("단위").frame(width: 60, alignment: .leading)
                                     }
@@ -74,7 +129,7 @@ public struct CSVPreviewView: View {
                                     ForEach(viewModel.previewRecords) { record in
                                         HStack(spacing: 16) {
                                             Text(formatDate(record.timestamp, with: viewModel.usedDateFormat))
-                                                .frame(width: viewModel.usedDateFormat != nil ? 200 : 160, alignment: .leading)
+                                                .frame(width: 160, alignment: .leading)
                                             Text(String(format: "%.1f", record.value))
                                                 .bold()
                                                 .frame(width: 80, alignment: .trailing)
@@ -153,13 +208,23 @@ public struct CSVPreviewView: View {
             }
         }
         .navigationTitle("업로드 미리보기")
-        .confirmationDialog("HealthKit에 데이터 100건을 저장하시겠습니까?", isPresented: $viewModel.showSaveConfirmation, titleVisibility: .visible) {
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                if viewModel.isImporting {
+                    ProgressView().progressViewStyle(CircularProgressViewStyle())
+                }
+            }
+        }
+        .onAppear {
+            extractSampleColumns()
+        }
+        .confirmationDialog("HealthKit에 데이터 저장", isPresented: $viewModel.showSaveConfirmation, titleVisibility: .visible) {
             Button("저장 실행") {
                 viewModel.startHealthKitSave()
             }
             Button("취소", role: .cancel) { }
         } message: {
-            Text("검증이 통과된 \(viewModel.previewRecords.count)건의 데이터가 HealthKit에 덮어쓰기 권한으로 기록됩니다.")
+            Text("검증이 통과된 \(viewModel.previewRecords.count)건의 데이터를 HealthKit에 덮어쓰기 권한으로 기록하시겠습니까?")
         }
         .alert(isPresented: $viewModel.showDuplicateAlert) {
             Alert(
@@ -172,6 +237,24 @@ public struct CSVPreviewView: View {
                     viewModel.saveToHealthKit(strategy: .skip)
                 }
             )
+        }
+        .alert("저장 완료", isPresented: $viewModel.showSaveSuccessAlert) {
+            Button("확인", role: .cancel) { 
+                presentationMode.wrappedValue.dismiss()
+            }
+        } message: {
+            Text("\(viewModel.lastSavedCount)건의 데이터가 안전하게 저장되었습니다.")
+        }
+    }
+    
+    private func extractSampleColumns() {
+        if let lines = viewModel.parseResult?.invalidRecords.prefix(5).map({ $0.rawLine }), let targetLine = lines.last(where: { $0.contains(",") }) ?? lines.last {
+            sampleColumns = targetLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            if sampleColumns.count > 0 { selectedDateIndex = 0 }
+            if sampleColumns.count > 1 { selectedValueIndex = 1 }
+        } else if let firstValid = viewModel.parseResult?.validRecords.first {
+            // 이 곳은 도달할 가능성 적음
+            sampleColumns = ["날짜", "수치"]
         }
     }
     

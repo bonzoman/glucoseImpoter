@@ -25,7 +25,6 @@ struct ContentView: View {
     // 권한 및 파일 임포터 State
     @State private var isHealthKitAuthorized = false
     @State private var showFileImporter = false
-    @State private var isManualMappingMode = false
 
     var body: some View {
         NavigationStack {
@@ -44,26 +43,13 @@ struct ContentView: View {
                 .background(Color(UIColor.secondarySystemBackground))
                 
                 List {
-                    Section(header: Text("데이터 가져오기"), footer: Text("지원 포맷 외의 파일을 강제로 열려면 수동 지정 버튼을 사용하세요.")) {
+                    Section(header: Text("데이터 가져오기"), footer: Text("CSV 파일을 선택하면 자동으로 포맷을 인식합니다. 인식 실패 시 수동으로 형태를 지정할 수 있습니다.")) {
                         Button(action: {
-                            isManualMappingMode = false
                             showFileImporter = true
                         }) {
                             HStack {
                                 Image(systemName: "doc.badge.plus")
-                                Text("CSV 파일 선택 및 업로드 (자동 포맷 인식)")
-                                    .fontWeight(.medium)
-                            }
-                        }
-                        .disabled(!isHealthKitAuthorized)
-                        
-                        Button(action: {
-                            isManualMappingMode = true
-                            showFileImporter = true
-                        }) {
-                            HStack {
-                                Image(systemName: "hand.tap")
-                                Text("포맷 수동 지정으로 가져오기")
+                                Text("CSV 파일 선택 및 업로드")
                                     .fontWeight(.medium)
                             }
                         }
@@ -127,12 +113,8 @@ struct ContentView: View {
                         try FileManager.default.copyItem(at: url, to: tempURL)
                         url.stopAccessingSecurityScopedResource()
                         
-                        // 강제 수동 모드인지, 자동 인식 모드인지 분기
-                        if isManualMappingMode {
-                            csvViewModel.loadCSVForManualMapping(from: tempURL)
-                        } else {
-                            csvViewModel.loadCSV(from: tempURL)
-                        }
+                        // 단일 로딩 함수 호출
+                        csvViewModel.loadCSV(from: tempURL)
                         
                         showPreview = true
                     } catch {
