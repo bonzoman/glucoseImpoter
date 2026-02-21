@@ -29,8 +29,15 @@ public struct CSVPreviewView: View {
                         HStack {
                             Text("총 검증 결과")
                             Spacer()
-                            Text("총 \(result.validRecords.count + result.invalidRecords.count)건 (성공 \(result.validRecords.count)건 / 오류 \(result.invalidRecords.count)건)")
-                                .foregroundColor(result.invalidRecords.isEmpty ? .secondary : .red)
+                            VStack(alignment: .trailing, spacing: 4) {
+                                Text("총 \(result.validRecords.count + result.invalidRecords.count)건 (성공 \(result.validRecords.count)건 / 오류 \(result.invalidRecords.count)건)")
+                                    .foregroundColor(result.invalidRecords.isEmpty ? .secondary : .red)
+                                if result.skippedCount > 0 {
+                                    Text("\(result.skippedCount)건 skip 처리됨 (사유: \(result.skippedReason ?? "알 수 없음"))")
+                                        .font(.caption)
+                                        .foregroundColor(.orange)
+                                }
+                            }
                         }
                     }
                     
@@ -66,7 +73,7 @@ public struct CSVPreviewView: View {
                                     // 데이터 행
                                     ForEach(viewModel.previewRecords) { record in
                                         HStack(spacing: 16) {
-                                            Text("\(record.timestamp.formatted())")
+                                            Text(formatDate(record.timestamp, with: viewModel.usedDateFormat))
                                                 .frame(width: viewModel.usedDateFormat != nil ? 200 : 160, alignment: .leading)
                                             Text(String(format: "%.1f", record.value))
                                                 .bold()
@@ -166,5 +173,14 @@ public struct CSVPreviewView: View {
                 }
             )
         }
+    }
+    
+    private func formatDate(_ date: Date, with formatString: String?) -> String {
+        guard let format = formatString else {
+            return date.formatted()
+        }
+        let formatter = DateFormatter()
+        formatter.dateFormat = format
+        return formatter.string(from: date)
     }
 }

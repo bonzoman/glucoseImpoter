@@ -73,6 +73,8 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
     public func read(from url: URL, targetUnit: GlucoseUnit? = nil, manualConfig: ManualCSVFormat? = nil) async throws -> CSVParseResult {
         var validRecords: [GlucoseRecord] = []
         var invalidRecords: [CSVParseErrorRecord] = []
+        var skippedCount = 0
+        var skippedReason: String? = nil
         
         var detectedVendor: CSVVendorType = .custom
         var detectedUnit: GlucoseUnit = targetUnit ?? .mgDL
@@ -87,14 +89,15 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         
         // 1. 인코딩 처리: UTF-8 시도 후 실패하면 CP949(EUC-KR) 시도, 정 안되면 Lossy UTF8
         let content = try readStringWithEncodings(from: url)
-        let lines = content.components(separatedBy: .newlines)
+        let lines = content.components(separatedBy: "\n")
         
         print("📄 [CSVReader] 파일 읽기 시작 (총 \(lines.count)줄)")
         
         var lineNumber = 0
         for line in lines {
             lineNumber += 1
-            let trimmedLine = line.trimmingCharacters(in: .whitespacesAndNewlines)
+            // \r 찌꺼기 제거 및 공백 트림
+            let trimmedLine = line.replacingOccurrences(of: "\r", with: "").trimmingCharacters(in: .whitespacesAndNewlines)
             guard !trimmedLine.isEmpty else { continue }
             
             // --- Libre 고정 파싱 분기 ---
@@ -116,7 +119,8 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 // 기록 유형(0 또는 1) 필터링 (그 외의 데이터는 예외 명시 후 스킵)
                 if recordType != "0" && recordType != "1" {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "리브레 예외 데이터(무시됨)"))
+                    skippedCount += 1
+                    skippedReason = "리브레 예외 데이터(무시됨)"
                     continue
                 }
                 
@@ -283,6 +287,8 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             originalUnit: detectedUnit,
             validRecords: validRecords,
             invalidRecords: invalidRecords,
+            skippedCount: skippedCount,
+            skippedReason: skippedReason,
             usedDateFormat: determinedDateFormat
         )
     }
