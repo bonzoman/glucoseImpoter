@@ -20,10 +20,16 @@ public struct CSVPreviewView: View {
                 List {
                     Section(header: Text("파일 정보")) {
                         HStack {
+                            Text("파 일 명")
+                            Spacer()
+                            Text(viewModel.lastLoadedURL?.lastPathComponent ?? "알 수 없음")
+                                .foregroundColor(.primary)
+                        }
+                        HStack {
                             Text("포맷 인식")
                             Spacer()
                             if result.vendor == .custom {
-                                Text("알 수 없는 포맷 (추후 수동 매핑)")
+                                Text("알 수 없는 포맷")
                                     .foregroundColor(.red)
                             } else {
                                 Text("\(result.vendor.rawValue) 파일입니다")
@@ -31,16 +37,19 @@ public struct CSVPreviewView: View {
                                     .bold()
                             }
                         }
-                        HStack {
-                            Text("총 검증 결과")
-                            Spacer()
-                            VStack(alignment: .trailing, spacing: 4) {
-                                Text("총 \(result.totalReadLines)건 (성공 \(result.validRecords.count)건 / skip \(result.skippedCount)건 / 오류 \(result.invalidRecords.count)건)")
-                                    .foregroundColor(result.invalidRecords.isEmpty ? .secondary : .red)
-                                if result.skippedCount > 0 {
-                                    Text("\(result.skippedCount)건 skip 처리됨 (사유: \(result.skippedReason ?? "알 수 없음"))")
-                                        .font(.caption)
-                                        .foregroundColor(.orange)
+                        
+                        if result.vendor != .custom || !result.validRecords.isEmpty {
+                            HStack {
+                                Text("총 검증 결과")
+                                Spacer()
+                                VStack(alignment: .trailing, spacing: 4) {
+                                    Text("총 \(result.totalReadLines)건 (성공 \(result.validRecords.count)건 / skip \(result.skippedCount)건 / 오류 \(result.invalidRecords.count)건)")
+                                        .foregroundColor(result.invalidRecords.isEmpty ? .secondary : .red)
+                                    if result.skippedCount > 0 {
+                                        Text("\(result.skippedCount)건 skip 처리됨 (사유: \(result.skippedReason ?? "알 수 없음"))")
+                                            .font(.caption)
+                                            .foregroundColor(.orange)
+                                    }
                                 }
                             }
                         }
@@ -57,29 +66,25 @@ public struct CSVPreviewView: View {
                                     Text("데이터를 불러올 수 없습니다.")
                                         .foregroundColor(.secondary)
                                 } else {
-                                    HStack {
-                                        Text("측정일시")
-                                            .font(.subheadline)
-                                        Spacer()
-                                        Picker("측정 일시 열 선택", selection: $selectedDateIndex) {
-                                            ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
-                                            }
+                                    Text("측정일시")
+                                        .font(.subheadline)
+                                        .foregroundColor(.primary)
+                                    Picker("", selection: $selectedDateIndex) {
+                                        ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                            Text("열 \(index): \(sampleColumns[index])").tag(index)
                                         }
-                                        .pickerStyle(.menu)
                                     }
+                                    .pickerStyle(.menu)
                                     
-                                    HStack {
-                                        Text("혈당수치")
-                                            .font(.subheadline)
-                                        Spacer()
-                                        Picker("혈당 수치 열 선택", selection: $selectedValueIndex) {
-                                            ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                                Text("열 \(index): \(sampleColumns[index])").tag(index)
-                                            }
+                                    Text("혈당수치")
+                                        .font(.subheadline)
+                                        .foregroundColor(.primary)
+                                    Picker("", selection: $selectedValueIndex) {
+                                        ForEach(0..<sampleColumns.count, id: \.self) { index in
+                                            Text("열 \(index): \(sampleColumns[index])").tag(index)
                                         }
-                                        .pickerStyle(.menu)
                                     }
+                                    .pickerStyle(.menu)
                                 }
                                 
                                 Button(action: {
@@ -100,101 +105,103 @@ public struct CSVPreviewView: View {
                         }
                     }
                     
-                    Section {
-                        Picker("필터", selection: $viewModel.selectedTab) {
-                            Text("성공 (\(result.validRecords.count))").tag(0)
-                            Text("오류 (\(result.invalidRecords.count))").tag(1)
-                        }
-                        .pickerStyle(SegmentedPickerStyle())
-                        .listRowInsets(EdgeInsets())
-                        .listRowBackground(Color.clear)
-                    }
-                    
-                    if viewModel.selectedTab == 0 {
-                        Section(header: Text("미리보기 (최대 100건)")) {
-                            ScrollView(.horizontal, showsIndicators: true) {
-                                VStack(alignment: .leading, spacing: 12) {
-                                    // 헤더(Header) 행
-                                    HStack(spacing: 16) {
-                                        Text("측정 일시").frame(width: 160, alignment: .leading)
-                                        Text("혈당 수치").frame(width: 80, alignment: .trailing)
-                                        Text("단위").frame(width: 60, alignment: .leading)
-                                    }
-                                    .font(.caption)
-                                    .foregroundColor(.secondary)
-                                    
-                                    Divider()
-                                    
-                                    // 데이터 행
-                                    ForEach(viewModel.previewRecords) { record in
-                                        HStack(spacing: 16) {
-                                            Text(formatDate(record.timestamp, with: viewModel.usedDateFormat))
-                                                .frame(width: 160, alignment: .leading)
-                                            Text(String(format: "%.1f", record.value))
-                                                .bold()
-                                                .frame(width: 80, alignment: .trailing)
-                                            Text("mg/dL")
-                                                .frame(width: 60, alignment: .leading)
-                                                .foregroundColor(.secondary)
-                                        }
-                                        .font(.subheadline)
-                                        Divider()
-                                    }
-                                    
-                                    if result.validRecords.count > 100 {
-                                        Text("+ \(result.validRecords.count - 100)건이 더 있습니다.")
-                                            .font(.caption)
-                                            .foregroundColor(.blue)
-                                            .padding(.top, 4)
-                                    }
-                                }
-                                .padding(.vertical, 8)
+                    if result.vendor != .custom || !result.validRecords.isEmpty {
+                        Section {
+                            Picker("필터", selection: $viewModel.selectedTab) {
+                                Text("성공 (\(result.validRecords.count))").tag(0)
+                                Text("오류 (\(result.invalidRecords.count))").tag(1)
                             }
+                            .pickerStyle(SegmentedPickerStyle())
+                            .listRowInsets(EdgeInsets())
+                            .listRowBackground(Color.clear)
                         }
-                    } else {
-                        Section(header: Text("오류 내역")) {
-                            if result.invalidRecords.isEmpty {
-                                Text("오류 없음")
-                                    .foregroundColor(.secondary)
-                            } else {
+                        
+                        if viewModel.selectedTab == 0 {
+                            Section(header: Text("미리보기 (최대 100건)")) {
                                 ScrollView(.horizontal, showsIndicators: true) {
                                     VStack(alignment: .leading, spacing: 12) {
                                         // 헤더(Header) 행
                                         HStack(spacing: 16) {
-                                            Text("Line").frame(width: 50, alignment: .leading)
-                                            Text("오류 사유").frame(width: 150, alignment: .leading)
-                                            Text("원본 데이터").frame(width: 300, alignment: .leading)
+                                            Text("측정 일시").frame(width: 160, alignment: .leading)
+                                            Text("혈당 수치").frame(width: 80, alignment: .trailing)
+                                            Text("단위").frame(width: 60, alignment: .leading)
                                         }
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                         
                                         Divider()
                                         
-                                        // 에러 행
-                                        ForEach(result.invalidRecords.prefix(100)) { error in
+                                        // 데이터 행
+                                        ForEach(viewModel.previewRecords) { record in
                                             HStack(spacing: 16) {
-                                                Text("\(error.lineNumber)")
-                                                    .frame(width: 50, alignment: .leading)
-                                                    .foregroundColor(.secondary)
-                                                Text(error.reason)
-                                                    .frame(width: 180, alignment: .leading)
-                                                    .foregroundColor(.red)
-                                                Text(error.rawLine)
-                                                    .frame(width: 400, alignment: .leading)
+                                                Text(formatDate(record.timestamp, with: viewModel.usedDateFormat))
+                                                    .frame(width: 160, alignment: .leading)
+                                                Text(String(format: "%.1f", record.value))
+                                                    .bold()
+                                                    .frame(width: 80, alignment: .trailing)
+                                                Text("mg/dL")
+                                                    .frame(width: 60, alignment: .leading)
                                                     .foregroundColor(.secondary)
                                             }
-                                            .font(.caption.monospaced())
+                                            .font(.subheadline)
                                             Divider()
                                         }
                                         
-                                        if result.invalidRecords.count > 100 {
-                                            Text("+ \(result.invalidRecords.count - 100)건의 오류가 더 있습니다.")
+                                        if result.validRecords.count > 100 {
+                                            Text("+ \(result.validRecords.count - 100)건이 더 있습니다.")
                                                 .font(.caption)
                                                 .foregroundColor(.blue)
                                                 .padding(.top, 4)
                                         }
                                     }
                                     .padding(.vertical, 8)
+                                }
+                            }
+                        } else {
+                            Section(header: Text("오류 내역")) {
+                                if result.invalidRecords.isEmpty {
+                                    Text("오류 없음")
+                                        .foregroundColor(.secondary)
+                                } else {
+                                    ScrollView(.horizontal, showsIndicators: true) {
+                                        VStack(alignment: .leading, spacing: 12) {
+                                            // 헤더(Header) 행
+                                            HStack(spacing: 16) {
+                                                Text("Line").frame(width: 50, alignment: .leading)
+                                                Text("오류 사유").frame(width: 150, alignment: .leading)
+                                                Text("원본 데이터").frame(width: 300, alignment: .leading)
+                                            }
+                                            .font(.caption)
+                                            .foregroundColor(.secondary)
+                                            
+                                            Divider()
+                                            
+                                            // 에러 행
+                                            ForEach(result.invalidRecords.prefix(100)) { error in
+                                                HStack(spacing: 16) {
+                                                    Text("\(error.lineNumber)")
+                                                        .frame(width: 50, alignment: .leading)
+                                                        .foregroundColor(.secondary)
+                                                    Text(error.reason)
+                                                        .frame(width: 180, alignment: .leading)
+                                                        .foregroundColor(.red)
+                                                    Text(error.rawLine)
+                                                        .frame(width: 400, alignment: .leading)
+                                                        .foregroundColor(.secondary)
+                                                }
+                                                .font(.caption.monospaced())
+                                                Divider()
+                                            }
+                                            
+                                            if result.invalidRecords.count > 100 {
+                                                Text("+ \(result.invalidRecords.count - 100)건의 오류가 더 있습니다.")
+                                                    .font(.caption)
+                                                    .foregroundColor(.blue)
+                                                    .padding(.top, 4)
+                                            }
+                                        }
+                                        .padding(.vertical, 8)
+                                    }
                                 }
                             }
                         }
@@ -216,7 +223,14 @@ public struct CSVPreviewView: View {
             }
         }
         .onAppear {
-            extractSampleColumns()
+            if !viewModel.isImporting {
+                extractSampleColumns()
+            }
+        }
+        .onChange(of: viewModel.isImporting) { isImporting in
+            if !isImporting {
+                extractSampleColumns()
+            }
         }
         .confirmationDialog("HealthKit에 데이터 저장", isPresented: $viewModel.showSaveConfirmation, titleVisibility: .visible) {
             Button("저장 실행") {
