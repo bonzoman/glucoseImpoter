@@ -64,7 +64,9 @@ struct ContentView: View {
                             }) {
                                 HStack {
                                     Image(systemName: "arrow.uturn.backward.circle")
-                                    Text("마지막 업로드 한 데이터 \(lastImportCount)건 일괄삭제")
+                                    Text("마지막 업로드 \(lastImportCount)건 일괄삭제")
+                                        .lineLimit(1)
+                                        .minimumScaleFactor(0.8)
                                 }
                             }
                             .disabled(!isHealthKitAuthorized)

@@ -72,11 +72,14 @@ public struct CSVPreviewView: View {
                                     HStack {
                                         Picker("", selection: $selectedDateIndex) {
                                             ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                                Text("\(index) 열: \(sampleColumns[index])").tag(index)
+                                                Text("\(index) 열: \(sampleColumns[index])")
+                                                    .lineLimit(1)
+                                                    .tag(index)
                                             }
                                         }
+                                        .labelsHidden()
                                         .pickerStyle(.menu)
-                                        Spacer()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .padding(.leading, -12)
                                     
@@ -86,11 +89,14 @@ public struct CSVPreviewView: View {
                                     HStack {
                                         Picker("", selection: $selectedValueIndex) {
                                             ForEach(0..<sampleColumns.count, id: \.self) { index in
-                                                Text("\(index) 열: \(sampleColumns[index])").tag(index)
+                                                Text("\(index) 열: \(sampleColumns[index])")
+                                                    .lineLimit(1)
+                                                    .tag(index)
                                             }
                                         }
+                                        .labelsHidden()
                                         .pickerStyle(.menu)
-                                        Spacer()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
                                     }
                                     .padding(.leading, -12)
                                 }
