@@ -84,7 +84,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         
         if let config = manualConfig {
             detectedVendor = .custom
-            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: config.dateColumnIndex, valueIndex: config.valueColumnIndex, recordTypeIndex: nil, dateFormat: config.dateFormat)
+            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: config.dateColumnIndex, valueIndex: config.valueColumnIndex, recordTypeIndex: nil, dateFormat: config.dateFormat ?? "")
         }
         
         // 1. 인코딩 처리: UTF-8 시도 후 실패하면 CP949(EUC-KR) 시도, 정 안되면 Lossy UTF8
@@ -241,7 +241,8 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 let fallbackFormatter = DateFormatter()
                 fallbackFormatter.locale = Locale(identifier: "en_US_POSIX")
                 fallbackFormatter.timeZone = TimeZone.current
-                let fallbackFormats = ["yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm"]
+                // mm/dd/yyyy 포맷도 자동인식 목록에 추가
+                let fallbackFormats = ["yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm", "MM/dd/yyyy HH:mm", "MM/dd/yyyy HH:mm:ss", "dd.MM.yyyy HH:mm"]
                 for fmt in fallbackFormats {
                     fallbackFormatter.dateFormat = fmt
                     if let d = fallbackFormatter.date(from: dateString) {
@@ -253,6 +254,12 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             }
             
             guard let validDate = date else {
+                // 수동 매핑 지정 시, 파일 최상단부(헤더 등)에서 날짜 포맷이 안 맞으면 조용히 무시 (오류 노출 방지)
+                if manualConfig != nil && validRecords.isEmpty && lineNumber <= 5 {
+                    skippedCount += 1
+                    skippedReason = "헤더 무시됨"
+                    continue
+                }
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 형식 오류: \(dateString)"))
                 continue
             }
@@ -264,6 +271,14 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                         continue
                     }
                 }
+                
+                // 수동 매핑 지정 시, 파일 최상단부(헤더)에서 수치 변환 실패 시 조용히 무시
+                if manualConfig != nil && validRecords.isEmpty && lineNumber <= 5 {
+                    skippedCount += 1
+                    skippedReason = "헤더 무시됨"
+                    continue
+                }
+                
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "수치 형식 오류 (빈 값 포함): \(valueString)"))
                 continue
             }

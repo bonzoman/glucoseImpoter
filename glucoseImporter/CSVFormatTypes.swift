@@ -53,9 +53,9 @@ public struct CSVParseResult: Equatable {
 public struct ManualCSVFormat: Equatable {
     public let dateColumnIndex: Int
     public let valueColumnIndex: Int
-    public let dateFormat: String
+    public let dateFormat: String?
     
-    public init(dateColumnIndex: Int, valueColumnIndex: Int, dateFormat: String) {
+    public init(dateColumnIndex: Int, valueColumnIndex: Int, dateFormat: String? = nil) {
         self.dateColumnIndex = dateColumnIndex
         self.valueColumnIndex = valueColumnIndex
         self.dateFormat = dateFormat

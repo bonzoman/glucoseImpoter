@@ -19,6 +19,7 @@ struct ContentView: View {
     @State private var deleteTargetCount: Int? = nil
     @State private var isFetchingDeleteCount = false
     @State private var showDeleteConfirm = false
+    @State private var showNoDataAlert = false
     @AppStorage("lastImportBatchID") private var lastImportBatchID: String = ""
     
     // 권한 및 파일 임포터 State
@@ -163,41 +164,26 @@ struct ContentView: View {
             .sheet(isPresented: $showDatePicker) {
                 NavigationView {
                     Form {
-                        Section(header: Text("기간 설정")) {
-                            DatePicker("시작일", selection: $deleteStartDate, displayedComponents: [.date, .hourAndMinute])
-                                .onChange(of: deleteStartDate) { _, _ in deleteTargetCount = nil }
-                            DatePicker("종료일", selection: $deleteEndDate, displayedComponents: [.date, .hourAndMinute])
-                                .onChange(of: deleteEndDate) { _, _ in deleteTargetCount = nil }
+                        Section(header: Text("안내")) {
+                            Text("이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
                         }
                         
-                        Section {
-                            Button(action: {
-                                fetchTargetCount()
-                            }) {
+                        Section(header: Text("기간 설정 (일자 기준)")) {
+                            DatePicker("시작일", selection: $deleteStartDate, displayedComponents: [.date])
+                                .environment(\.locale, Locale(identifier: "en_US"))
+                            DatePicker("종료일", selection: $deleteEndDate, displayedComponents: [.date])
+                                .environment(\.locale, Locale(identifier: "en_US"))
+                        }
+                        
+                        if isFetchingDeleteCount {
+                            Section {
                                 HStack {
                                     Spacer()
-                                    if isFetchingDeleteCount {
-                                        ProgressView().progressViewStyle(CircularProgressViewStyle())
-                                    } else {
-                                        Text("삭제 대상 조회")
-                                            .fontWeight(.bold)
-                                    }
+                                    ProgressView("삭제 대상 검색 중...")
+                                        .progressViewStyle(CircularProgressViewStyle())
                                     Spacer()
-                                }
-                            }
-                            .disabled(isFetchingDeleteCount)
-                            
-                            if let count = deleteTargetCount {
-                                if count == 0 {
-                                    Text("해당 기간에 이 앱으로 저장된 데이터가 없습니다.")
-                                        .foregroundColor(.secondary)
-                                        .font(.subheadline)
-                                        .frame(maxWidth: .infinity, alignment: .center)
-                                } else {
-                                    Text("\(count)건의 삭제 대상이 있습니다.")
-                                        .foregroundColor(.red)
-                                        .font(.subheadline)
-                                        .frame(maxWidth: .infinity, alignment: .center)
                                 }
                             }
                         }
@@ -209,11 +195,16 @@ struct ContentView: View {
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
                             Button("삭제 실행") {
-                                showDeleteConfirm = true
+                                fetchAndCheckTargetCount()
                             }
                             .foregroundColor(.red)
-                            .disabled(deleteTargetCount == nil || deleteTargetCount == 0 || isFetchingDeleteCount)
+                            .disabled(isFetchingDeleteCount)
                         }
+                    }
+                    .alert("삭제 대상 없음", isPresented: $showNoDataAlert) {
+                        Button("확인", role: .cancel) { }
+                    } message: {
+                        Text("해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다.")
                     }
                     .alert("정말 삭제하시겠습니까?", isPresented: $showDeleteConfirm) {
                         Button("취소", role: .cancel) { }
@@ -253,15 +244,29 @@ struct ContentView: View {
         }
     }
     
-    private func fetchTargetCount() {
+    private func fetchAndCheckTargetCount() {
         isFetchingDeleteCount = true
         deleteTargetCount = nil
+        // 시작일은 0시 0분, 종료일은 23시 59분으로 보정
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: deleteStartDate)
+        var endComp = calendar.dateComponents([.year, .month, .day], from: deleteEndDate)
+        endComp.hour = 23
+        endComp.minute = 59
+        endComp.second = 59
+        let end = calendar.date(from: endComp) ?? deleteEndDate
+        
         Task {
             do {
-                let count = try await HealthKitStoreManager.shared.fetchDeleteTargetCount(from: deleteStartDate, to: deleteEndDate)
+                let count = try await HealthKitStoreManager.shared.fetchDeleteTargetCount(from: start, to: end)
                 await MainActor.run {
                     self.deleteTargetCount = count
                     self.isFetchingDeleteCount = false
+                    if count == 0 {
+                        self.showNoDataAlert = true
+                    } else {
+                        self.showDeleteConfirm = true
+                    }
                 }
             } catch {
                 await MainActor.run {
@@ -273,9 +278,17 @@ struct ContentView: View {
     }
     
     private func deleteByDateRange() {
+        let calendar = Calendar.current
+        let start = calendar.startOfDay(for: deleteStartDate)
+        var endComp = calendar.dateComponents([.year, .month, .day], from: deleteEndDate)
+        endComp.hour = 23
+        endComp.minute = 59
+        endComp.second = 59
+        let end = calendar.date(from: endComp) ?? deleteEndDate
+        
         Task {
             do {
-                let deletedCount = try await HealthKitStoreManager.shared.deleteRecords(from: deleteStartDate, to: deleteEndDate)
+                let deletedCount = try await HealthKitStoreManager.shared.deleteRecords(from: start, to: end)
                 print("🗑️ 기간 삭제 성공: \(deletedCount)건 삭제됨")
             } catch {
                 print("❌ 기간 삭제 실패: \(error.localizedDescription)")
