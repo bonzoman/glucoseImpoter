@@ -22,6 +22,7 @@ struct ContentView: View {
     @State private var showNoDataAlert = false
     @AppStorage("lastImportBatchID") private var lastImportBatchID: String = ""
     @AppStorage("lastImportCount") private var lastImportCount: Int = 0
+    @State private var isRollingBack = false
     
     // 권한 및 파일 임포터 State
     @State private var isHealthKitAuthorized = false
@@ -59,17 +60,39 @@ struct ContentView: View {
                     
                     Section(header: Text("데이터 관리")) {
                         if !lastImportBatchID.isEmpty {
-                            Button(role: .destructive, action: {
-                                rollbackLastImport()
-                            }) {
-                                HStack {
-                                    Image(systemName: "arrow.uturn.backward.circle")
-                                    Text("마지막 업로드 \(lastImportCount)건 일괄삭제")
-                                        .lineLimit(1)
-                                        .minimumScaleFactor(0.8)
+                            HStack {
+                                Button(role: .destructive, action: {
+                                    rollbackLastImport()
+                                }) {
+                                    HStack {
+                                        if isRollingBack {
+                                            ProgressView()
+                                                .progressViewStyle(CircularProgressViewStyle())
+                                                .padding(.trailing, 4)
+                                            Text("삭제 진행 중...")
+                                                .lineLimit(1)
+                                        } else {
+                                            Image(systemName: "arrow.uturn.backward.circle")
+                                            Text("마지막 업로드 \(lastImportCount)건 일괄삭제")
+                                                .lineLimit(1)
+                                                .minimumScaleFactor(0.8)
+                                        }
+                                    }
                                 }
+                                .disabled(!isHealthKitAuthorized || isRollingBack)
+                                
+                                Spacer()
+                                
+                                Button(action: {
+                                    // 수동 닫기: 롤백 기능(버튼) 숨김 처리
+                                    lastImportBatchID = ""
+                                    lastImportCount = 0
+                                }) {
+                                    Image(systemName: "xmark.circle.fill")
+                                        .foregroundColor(.secondary)
+                                }
+                                .buttonStyle(BorderlessButtonStyle()) // Row 클릭 간섭 방지
                             }
-                            .disabled(!isHealthKitAuthorized)
                         }
                         
                         Button(role: .destructive, action: {
@@ -207,11 +230,12 @@ struct ContentView: View {
                             Button("취소") { showDatePicker = false }
                         }
                         ToolbarItem(placement: .navigationBarTrailing) {
-                            Button("삭제 실행") {
-                                showDeleteConfirm = true
+                            if let count = deleteTargetCount, count > 0, !isFetchingDeleteCount {
+                                Button("삭제 실행") {
+                                    showDeleteConfirm = true
+                                }
+                                .foregroundColor(.red)
                             }
-                            .foregroundColor(.red)
-                            .disabled(deleteTargetCount == nil || deleteTargetCount == 0 || isFetchingDeleteCount)
                         }
                     }
                     .alert("정말 삭제하시겠습니까?", isPresented: $showDeleteConfirm) {
@@ -242,14 +266,21 @@ struct ContentView: View {
 
     private func rollbackLastImport() {
         guard !lastImportBatchID.isEmpty else { return }
+        isRollingBack = true
         Task {
             do {
                 let deletedCount = try await HealthKitStoreManager.shared.rollbackBatch(batchID: lastImportBatchID)
                 print("🗑️ 롤백 성공: \(deletedCount)건 삭제됨")
-                lastImportBatchID = "" // 롤백 후 비움
-                lastImportCount = 0
+                await MainActor.run {
+                    lastImportBatchID = "" // 롤백 후 리스트에서 비움
+                    lastImportCount = 0
+                    isRollingBack = false
+                }
             } catch {
                 print("❌ 롤백 실패: \(error.localizedDescription)")
+                await MainActor.run {
+                    isRollingBack = false
+                }
             }
         }
     }
