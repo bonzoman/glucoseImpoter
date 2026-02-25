@@ -288,7 +288,7 @@ public struct CSVPreviewView: View {
     
     private func extractSampleColumns() {
         if let lines = viewModel.parseResult?.invalidRecords.prefix(5).map({ $0.rawLine }), let targetLine = lines.last(where: { $0.contains(",") }) ?? lines.last {
-            sampleColumns = targetLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: .whitespacesAndNewlines) }
+            sampleColumns = targetLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t")) }
             if sampleColumns.count > 0 { selectedDateIndex = 0 }
             if sampleColumns.count > 1 { selectedValueIndex = 1 }
         } else if viewModel.parseResult?.validRecords.isEmpty == false {

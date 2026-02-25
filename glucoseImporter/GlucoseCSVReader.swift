@@ -221,7 +221,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                         cf.locale = Locale(identifier: "en_US_POSIX")
                         cf.timeZone = TimeZone.current
                         
-                        let formatsToTest = ["yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm:ss", "MM/dd/yyyy HH:mm", "yyyy.MM.dd HH:mm", "yyyy.M.d HH:mm"]
+                        let formatsToTest = ["yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm:ss", "MM/dd/yyyy HH:mm", "yyyy.MM.dd HH:mm", "yyyy.M.d HH:mm"]
                         var foundFormat: String?
                         for fmt in formatsToTest {
                             cf.dateFormat = fmt
@@ -268,8 +268,8 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 continue
             }
             
-            let dateString = components[format.dateColumnIndex].trimmingCharacters(in: .whitespacesAndNewlines)
-            let valueString = components[format.valueColumnIndex].trimmingCharacters(in: .whitespacesAndNewlines)
+            let dateString = components[format.dateColumnIndex].trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t"))
+            let valueString = components[format.valueColumnIndex].trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t"))
             
             // 날짜 파싱 시도 (기본 포맷 먼저, 안되면 추가 포맷 시도)
             var date = format.dateFormatter.date(from: dateString)
@@ -280,7 +280,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 fallbackFormatter.locale = Locale(identifier: "en_US_POSIX")
                 fallbackFormatter.timeZone = TimeZone.current
                 // mm/dd/yyyy 포맷도 자동인식 목록에 추가
-                let fallbackFormats = ["yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm", "MM/dd/yyyy HH:mm", "MM/dd/yyyy HH:mm:ss", "dd.MM.yyyy HH:mm"]
+                let fallbackFormats = ["yyyy-MM-dd'T'HH:mm:ss", "yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm", "MM/dd/yyyy HH:mm", "MM/dd/yyyy HH:mm:ss", "dd.MM.yyyy HH:mm"]
                 for fmt in fallbackFormats {
                     fallbackFormatter.dateFormat = fmt
                     if let d = fallbackFormatter.date(from: dateString) {
@@ -293,7 +293,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             
             guard let validDate = date else {
                 // 수동 매핑 지정 시, 파일 최상단부(헤더 등)에서 날짜 포맷이 안 맞으면 조용히 무시 (오류 노출 방지)
-                if manualConfig != nil && validRecords.isEmpty && lineNumber <= 5 {
+                if manualConfig != nil && validRecords.isEmpty && lineNumber <= 15 {
                     totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
                     continue
                 }
@@ -310,7 +310,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 }
                 
                 // 수동 매핑 지정 시, 파일 최상단부(헤더)에서 수치 변환 실패 시 조용히 무시
-                if manualConfig != nil && validRecords.isEmpty && lineNumber <= 5 {
+                if manualConfig != nil && validRecords.isEmpty && lineNumber <= 15 {
                     totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
                     continue
                 }

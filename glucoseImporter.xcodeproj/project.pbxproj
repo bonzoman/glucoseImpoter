@@ -27,6 +27,7 @@
 		0BAEAC302F4841FB00B60480 /* glucoseImporter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = glucoseImporter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BAEAC3F2F4841FC00B60480 /* glucoseImporterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = glucoseImporterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BAEAC492F4841FC00B60480 /* glucoseImporterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = glucoseImporterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		0BD67DF62F4F03E8002CAA00 /* dexcom_sample.csv */ = {isa = PBXFileReference; lastKnownFileType = text; path = dexcom_sample.csv; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -79,6 +80,7 @@
 				0BAEAC422F4841FC00B60480 /* glucoseImporterTests */,
 				0BAEAC4C2F4841FC00B60480 /* glucoseImporterUITests */,
 				0BAEAC312F4841FB00B60480 /* Products */,
+				0BD67DF62F4F03E8002CAA00 /* dexcom_sample.csv */,
 			);
 			sourceTree = "<group>";
 		};
@@ -192,6 +194,7 @@
 			knownRegions = (
 				en,
 				Base,
+				ko,
 			);
 			mainGroup = 0BAEAC272F4841FB00B60480;
 			minimizedProjectReferenceProxies = 1;
@@ -417,12 +420,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bnz.glucoseImporter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Debug;
 		};
@@ -453,12 +460,16 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.bnz.glucoseImporter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				STRING_CATALOG_GENERATE_SYMBOLS = YES;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_APPROACHABLE_CONCURRENCY = YES;
 				SWIFT_DEFAULT_ACTOR_ISOLATION = MainActor;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_UPCOMING_FEATURE_MEMBER_IMPORT_VISIBILITY = YES;
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
+				TARGETED_DEVICE_FAMILY = 1;
 			};
 			name = Release;
 		};
