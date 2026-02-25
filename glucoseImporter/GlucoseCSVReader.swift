@@ -80,6 +80,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         var detectedUnit: GlucoseUnit = targetUnit ?? .mgDL
         var currentDetection: FormatDetection? = nil
         var isLibreFormat = false
+        var isDexcomFormat = false
         var determinedDateFormat: String? = nil
         
         if let config = manualConfig {
@@ -90,13 +91,17 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         // 1. 인코딩 처리: UTF-8 시도 후 실패하면 CP949(EUC-KR) 시도, 정 안되면 Lossy UTF8
         let content = try readStringWithEncodings(from: url)
         
-        // 글로벌 Pre-sniffing: 전체 텍스트 첫 1천 바이트 내에서 리브레 식별
+        // 글로벌 Pre-sniffing
         let preSniffLength = min(content.count, 1000)
         let prefixString = String(content.prefix(preSniffLength)).lowercased()
         if prefixString.contains("freestyle libre") || prefixString.contains("freestylelibre") {
             isLibreFormat = true
             detectedVendor = .libre
             print("👁️ [CSVReader] 글로벌 스니핑 완료: Libre 포맷 사전 확정")
+        } else if prefixString.contains("timestamp (yyyy-mm-ddthh:mm:ss)") || prefixString.contains("glucose value (mg/dl)") {
+            isDexcomFormat = true
+            detectedVendor = .dexcom
+            print("👁️ [CSVReader] 글로벌 스니핑 완료: Dexcom 포맷 사전 확정")
         }
         
         let lines = content.components(separatedBy: "\n")
@@ -194,8 +199,67 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             }
             // --- Libre 고정 파싱 분기 종료 ---
             
-            // 비-Libre 벤더의 헤더 감지 로직
-            if !isLibreFormat && currentDetection == nil && detectedVendor != .custom {
+            // --- Dexcom 고정 파싱 분기 ---
+            if isDexcomFormat {
+                // Dexcom 파일의 상단 11줄 가량은 환자/기기 정보 메타데이터이므로 패스
+                if lineNumber <= 12 && !trimmedLine.lowercased().starts(with: "index") {
+                    totalReadLines -= 1
+                    continue
+                }
+                
+                let components = trimmedLine.split(separator: ",", omittingEmptySubsequences: false)
+                    .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t")) }
+                
+                // Dexcom 데이터는 최소 8개 이상의 컬럼(Index, Timestamp, Event Type, Event Subtype, Patient Info, Device Info, Source Device ID, Glucose Value)
+                guard components.count >= 8 else {
+                    if lineNumber <= 15 {
+                        totalReadLines -= 1
+                    } else {
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 데이터 컬럼 부족 (최소 8개 필요)"))
+                    }
+                    continue
+                }
+                
+                let dateString = components[1]
+                let eventType = components[2]
+                let valueString = components[7]
+                
+                // Event Type이 'EGV' (Estimated Glucose Value)인 경우만 유효한 연속혈당값으로 인정하고 나머지는 Skip 처리
+                guard eventType == "EGV" else {
+                    skippedCount += 1
+                    skippedReason = "EGV 이외의 이벤트 무시 (\(eventType))"
+                    continue
+                }
+                
+                // Dexcom 고유 T-포맷 날짜 파싱
+                let df = DateFormatter()
+                df.locale = Locale(identifier: "en_US_POSIX")
+                df.timeZone = TimeZone.current
+                df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                
+                guard let validDate = df.date(from: dateString) else {
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 날짜 형식 파싱 실패: \(dateString)"))
+                    continue
+                }
+                determinedDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
+                
+                guard !valueString.isEmpty, let value = Double(valueString) else {
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 혈당치 변환 실패: \(valueString)"))
+                    continue
+                }
+                
+                if value < 20.0 || value > 600.0 {
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 정상 혈당 범위 초과: \(value) mg/dL"))
+                    continue
+                }
+                
+                validRecords.append(GlucoseRecord(timestamp: validDate, value: value))
+                continue // Dexcom 파싱 스코프 완료
+            }
+            // --- Dexcom 고정 파싱 분기 종료 ---
+            
+            // 기존 비-Libre, 비-Dexcom 벤더의 헤더 감지 로직
+            if !isLibreFormat && !isDexcomFormat && currentDetection == nil && detectedVendor != .custom {
                 let lowerLine = trimmedLine.lowercased().replacingOccurrences(of: " ", with: "")
                 print("🔍 [CSVReader] L\(lineNumber) 감지: \(trimmedLine)")
                 
@@ -203,12 +267,9 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 // if (lowerLine.contains("혈당") && lowerLine.contains("시간")) || lowerLine.contains("historicglucose") || lowerLine.contains("기록혈당") || (lowerLine.contains("과거") && lowerLine.contains("mg/dl")) { ... }
                 // else if isLibreFileHint && lineNumber <= 5 { ... }
                 
-                if lowerLine.contains("dexcom") || lowerLine.contains("glucosevalue") {
-                    detectedVendor = .dexcom
-                    detectedUnit = .mgDL
-                    currentDetection = createDetection(vendor: .dexcom, unit: .mgDL, dateIndex: 1, valueIndex: 7, recordTypeIndex: nil, dateFormat: "yyyy-MM-dd HH:mm:ss")
-                    continue
-                } else if lowerLine.contains("accu-chek") {
+                // 기존 Libre 헤더 감지 로직 제거
+                
+                if lowerLine.contains("accu-chek") {
                     detectedVendor = .accuChek
                     detectedUnit = .mgDL
                     currentDetection = createDetection(vendor: .accuChek, unit: .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: "dd.MM.yyyy HH:mm", separator: ";")
