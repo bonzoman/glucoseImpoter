@@ -1,1345 +1,1362 @@
 {
-  "sourceLanguage": "en",
-  "strings": {
-    "": {},
-    "%@ 파일입니다": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%@ file."
+  "sourceLanguage" : "en",
+  "strings" : {
+    "" : {
+
+    },
+    "%@ 파일입니다" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%@ file."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$@ 파일입니다"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$@ 파일입니다"
           }
         }
       }
     },
-    "%lld": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%lld"
+    "%lld" : {
+      "localizations" : {
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%lld"
           }
         }
       }
     },
-    "%lld 열: %@": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld Column: %2$@"
+    "%lld 열: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld Column: %2$@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld 열: %2$@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld 열: %2$@"
           }
         }
       }
     },
-    "%lld건 skip 처리됨 (사유: %@)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld skipped (Reason: %2$@)"
+    "%lld건 skip 처리됨 (사유: %@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld skipped (Reason: %2$@)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld건 skip 처리됨 (사유: %2$@)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld건 skip 처리됨 (사유: %2$@)"
           }
         }
       }
     },
-    "%lld건의 데이터가 HealthKit에서 영구적으로 삭제됩니다. 계속하시겠습니까?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld records will be permanently deleted from HealthKit. Do you want to continue?"
+    "%lld건의 데이터가 HealthKit에서 영구적으로 삭제됩니다. 계속하시겠습니까?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld records will be permanently deleted from HealthKit. Do you want to continue?"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld건의 데이터가 HealthKit에서 영구적으로 삭제됩니다. 계속하시겠습니까?"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld건의 데이터가 HealthKit에서 영구적으로 삭제됩니다. 계속하시겠습니까?"
           }
         }
       }
     },
-    "%lld건의 데이터가 안전하게 저장되었습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld records have been securely saved."
+    "%lld건의 데이터가 안전하게 저장되었습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld records have been securely saved."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld건의 데이터가 안전하게 저장되었습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld건의 데이터가 안전하게 저장되었습니다."
           }
         }
       }
     },
-    "%lld건의 삭제 대상이 존재합니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld records exist for deletion."
+    "%lld건의 삭제 대상이 존재합니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld records exist for deletion."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "%1$lld건의 삭제 대상이 존재합니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "%1$lld건의 삭제 대상이 존재합니다."
           }
         }
       }
     },
-    "+ %lld건의 오류가 더 있습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+ %1$lld more errors."
+    "+ %lld건의 오류가 더 있습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %1$lld more errors."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+ %1$lld건의 오류가 더 있습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %1$lld건의 오류가 더 있습니다."
           }
         }
       }
     },
-    "+ %lld건이 더 있습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+ %1$lld more records."
+    "+ %lld건이 더 있습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %1$lld more records."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "+ %1$lld건이 더 있습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "+ %1$lld건이 더 있습니다."
           }
         }
       }
     },
-    "CSV 파일 선택 및 업로드": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Select and Upload CSV File"
+    "CSV 파일 선택 및 업로드" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Select and Upload CSV File"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "CSV 파일 선택 및 업로드"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "CSV 파일 선택 및 업로드"
           }
         }
       }
     },
-    "Glucose Importer": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose Importer"
+    "Dexcom 날짜 형식 파싱 실패: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom date parsing failed: %@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose Importer"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom 날짜 형식 파싱 실패: %@"
           }
         }
       }
     },
-    "HealthKit 저장": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save to HealthKit"
+    "Dexcom 데이터 컬럼 부족 (최소 8개 필요)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not enough Dexcom data columns (minimum 8 required)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HealthKit 저장"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom 데이터 컬럼 부족 (최소 8개 필요)"
           }
         }
       }
     },
-    "HealthKit에 데이터 저장": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Data to HealthKit"
+    "Dexcom 정상 혈당 범위 초과: %@ mg/dL" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom glucose out of normal range: %@ mg/dL"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "HealthKit에 데이터 저장"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom 정상 혈당 범위 초과: %@ mg/dL"
           }
         }
       }
+    },
+    "Dexcom 정상 혈당 범위 초과: %lf mg/dL" : {
+
     },
-    "Line": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Line"
+    "Dexcom 혈당치 변환 실패: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom glucose conversion failed: %@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Line"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Dexcom 혈당치 변환 실패: %@"
           }
         }
       }
     },
-    "mg/dL": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "mg/dL"
+    "EGV 이외의 이벤트 무시 (%@)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Ignored non-EGV event (%@)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "mg/dL"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "EGV 이외의 이벤트 무시 (%@)"
           }
         }
       }
     },
-    "검증이 통과된 %lld건의 데이터를 HealthKit에 기록하시겠습니까?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Do you want to save %1$lld verified records to HealthKit?"
+    "Glucose Importer" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucose Importer"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "검증이 통과된 %1$lld건의 데이터를 HealthKit에 기록하시겠습니까?"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucose Importer"
           }
         }
       }
     },
-    "과거 데이터 수동 삭제 (기간 지정)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Manual Deletion of Past Data (by Period)"
+    "HealthKit 저장" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save to HealthKit"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "과거 데이터 수동 삭제 (기간 지정)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthKit 저장"
           }
         }
       }
     },
-    "기간 설정 (일자 기준)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Set Period (by Date)"
+    "HealthKit에 데이터 저장" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Data to HealthKit"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기간 설정 (일자 기준)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "HealthKit에 데이터 저장"
           }
         }
       }
     },
-    "기록 삭제": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete Records"
+    "Libre 데이터 컬럼 부족 (최소 6개 필요)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Not enough Libre data columns (minimum 6 required)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "기록 삭제"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Libre 데이터 컬럼 부족 (최소 6개 필요)"
           }
         }
       }
     },
-    "단위": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unit"
+    "Line" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "단위"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Line"
           }
         }
       }
     },
-    "데이터가 없습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No data available."
+    "mg/dL" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg/dL"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "데이터가 없습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "mg/dL"
           }
         }
       }
     },
-    "데이터를 불러올 수 없습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Failed to load data."
+    "검증이 통과된 %lld건의 데이터를 HealthKit에 기록하시겠습니까?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Do you want to save %1$lld verified records to HealthKit?"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "데이터를 불러올 수 없습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "검증이 통과된 %1$lld건의 데이터를 HealthKit에 기록하시겠습니까?"
           }
         }
       }
     },
-    "모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "All data is securely processed on this device and is never transmitted to external servers."
+    "과거 데이터 수동 삭제 (기간 지정)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Manual Deletion of Past Data (by Period)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "과거 데이터 수동 삭제 (기간 지정)"
           }
         }
       }
     },
-    "문의": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Inquiry"
+    "기간 설정 (일자 기준)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Set Period (by Date)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "문의"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기간 설정 (일자 기준)"
           }
         }
       }
     },
-    "미리보기 (최대 100건)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Preview (Max 100 records)"
+    "기록 삭제" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete Records"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "미리보기 (최대 100건)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "기록 삭제"
           }
         }
       }
     },
-    "삭제": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Delete"
+    "날짜 파싱 실패: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date parsing failed: %@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "삭제"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 파싱 실패: %@"
           }
         }
       }
     },
-    "삭제 대상 검색 중...": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Searching for records to delete..."
+    "날짜 형식 오류: %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date format error: %@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "삭제 대상 검색 중..."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 형식 오류: %@"
           }
         }
       }
     },
-    "삭제 대상 조회": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Check Records to Delete"
+    "날짜 형식이 잘못되었습니다. (Line %@): %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid date format. (Line %@): %@"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "삭제 대상 조회"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "날짜 형식이 잘못되었습니다. (Line %@): %@"
           }
         }
       }
     },
-    "삭제 실행": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Execute Deletion"
+    "단위" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unit"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "삭제 실행"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "단위"
           }
         }
       }
     },
-    "삭제 진행 중...": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Deleting..."
+    "데이터가 없습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data available."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "삭제 진행 중..."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "데이터가 없습니다."
           }
         }
       }
     },
-    "성공 (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Success (%1$lld)"
+    "데이터를 불러올 수 없습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Failed to load data."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "성공 (%1$lld)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "데이터를 불러올 수 없습니다."
           }
         }
       }
     },
-    "수동 포맷으로 파싱 시도": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Attempt Parsing with Manual Format"
+    "리브레 예외 데이터(무시됨)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Libre exception data (ignored)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "수동 포맷으로 파싱 시도"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "리브레 예외 데이터(무시됨)"
           }
         }
       }
     },
-    "시작일": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Start Date"
+    "모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "All data is securely processed on this device and is never transmitted to external servers."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "시작일"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다."
           }
         }
       }
     },
-    "아래 데이터 열(Column)을 데이터 타입에 맞게 매핑해 주세요.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Please map the data columns below to the correct data types."
+    "문의" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Inquiry"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "아래 데이터 열(Column)을 데이터 타입에 맞게 매핑해 주세요."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "문의"
           }
         }
       }
     },
-    "안내": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Information"
+    "미리보기 (최대 100건)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Preview (Max 100 records)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "needs_review",
-            "value": "안내"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "미리보기 (최대 100건)"
           }
         }
       }
     },
-    "알 수 없는 포맷": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unknown Format"
+    "삭제" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Delete"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알 수 없는 포맷"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제"
           }
         }
       }
     },
-    "알 수 없는 포맷 감지됨": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unknown Format Detected"
+    "삭제 대상 검색 중..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Searching for records to delete..."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "알 수 없는 포맷 감지됨"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제 대상 검색 중..."
           }
         }
       }
     },
-    "업로드 미리보기": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Upload Preview"
+    "삭제 대상 조회" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Check Records to Delete"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "업로드 미리보기"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제 대상 조회"
           }
         }
       }
     },
-    "오류 (%lld)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error (%1$lld)"
+    "삭제 실행" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execute Deletion"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오류 (%1$lld)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제 실행"
           }
         }
       }
     },
-    "오류 내역": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error Details"
+    "삭제 진행 중..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Deleting..."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오류 내역"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "삭제 진행 중..."
           }
         }
       }
     },
-    "오류 발생": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Error Occurred"
+    "성공 (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Success (%1$lld)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오류 발생"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "성공 (%1$lld)"
           }
         }
       }
     },
-    "오류 사유": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reason for Error"
+    "수동 포맷으로 파싱 시도" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Attempt Parsing with Manual Format"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오류 사유"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "수동 포맷으로 파싱 시도"
           }
         }
       }
     },
-    "오류 없음": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No Errors"
+    "수치 형식 오류 (빈 값 포함): %@" : {
+
+    },
+    "시작일" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Start Date"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "오류 없음"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "시작일"
           }
         }
       }
     },
-    "원본 데이터": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Raw Data"
+    "아래 데이터 열(Column)을 데이터 타입에 맞게 매핑해 주세요." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please map the data columns below to the correct data types."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "원본 데이터"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "아래 데이터 열(Column)을 데이터 타입에 맞게 매핑해 주세요."
           }
         }
       }
     },
-    "이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Only data imported through Glucose Importer is eligible for deletion. Third-party data recorded by other apps will never be deleted."
+    "안내" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Information"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "needs_review",
+            "value" : "안내"
           }
         }
       }
     },
-    "저장": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save"
+    "알 수 없는 포맷" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown Format"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알 수 없는 포맷"
           }
         }
       }
     },
-    "저장 실행": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Execute Save"
+    "알 수 없는 포맷 감지됨" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unknown Format Detected"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장 실행"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "알 수 없는 포맷 감지됨"
           }
         }
       }
     },
-    "저장 완료": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Save Complete"
+    "업로드 미리보기" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Upload Preview"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "저장 완료"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "업로드 미리보기"
           }
         }
       }
     },
-    "정말 삭제하시겠습니까?": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Are you sure you want to delete?"
+    "오류 (%lld)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error (%1$lld)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "정말 삭제하시겠습니까?"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 (%1$lld)"
           }
         }
       }
     },
-    "종료일": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "End Date"
+    "오류 내역" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error Details"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "종료일"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 내역"
           }
         }
       }
     },
-    "중복 데이터 발견": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Duplicate Data Found"
+    "오류 발생" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Error Occurred"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "중복 데이터 발견"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 발생"
           }
         }
       }
     },
-    "총 %lld건 (성공 %lld건 / skip %lld건 / 오류 %lld건)": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total %1$lld records (Success: %2$lld / Skipped: %3$lld / Error: %4$lld)"
+    "오류 사유" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reason for Error"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "총 %1$lld건 (성공 %2$lld건 / skip %3$lld건 / 오류 %4$lld건)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 사유"
           }
         }
       }
     },
-    "총 검증 결과": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Total Verification Result"
+    "오류 없음" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No Errors"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "총 검증 결과"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "오류 없음"
           }
         }
       }
     },
-    "최근 업로드 %lld건 일괄 삭제": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Batch Delete %1$lld Recently Uploaded Records"
+    "원본 데이터" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Raw Data"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "최근 업로드 %1$lld건 일괄 삭제"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "원본 데이터"
           }
         }
       }
     },
-    "취소": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Cancel"
+    "이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Only data imported through Glucose Importer is eligible for deletion. Third-party data recorded by other apps will never be deleted."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "취소"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다."
           }
         }
       }
     },
-    "측정 일시": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Date & Time"
+    "저장" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "측정 일시"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장"
           }
         }
       }
     },
-    "측정일시": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Date & Time"
+    "저장 실행" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Execute Save"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "측정일시"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 실행"
           }
         }
       }
     },
-    "파 일 명": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "File Name"
+    "저장 완료" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Save Complete"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "파 일 명"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "저장 완료"
           }
         }
       }
     },
-    "파일 읽는 중...": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Reading file..."
+    "정말 삭제하시겠습니까?" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Are you sure you want to delete?"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "파일 읽는 중..."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정말 삭제하시겠습니까?"
           }
         }
       }
     },
-    "파일 정보": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "File Information"
+    "정상 혈당 범위(20~600) 초과: %@ mg/dL" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucose out of normal range (20~600): %@ mg/dL"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "파일 정보"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "정상 혈당 범위(20~600) 초과: %@ mg/dL"
           }
         }
       }
+    },
+    "정상 혈당 범위(20~600) 초과: %lf mg/dL" : {
+
     },
-    "파일을 선택하면 자동으로 포맷을 인식합니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Selecting a file will automatically recognize its format."
+    "종료일" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "End Date"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "파일을 선택하면 자동으로 포맷을 인식합니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "종료일"
           }
         }
       }
     },
-    "포맷 인식": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Format Recognized"
+    "중복 데이터 발견" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Duplicate Data Found"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "포맷 인식"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "중복 데이터 발견"
           }
         }
       }
     },
-    "필터": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Filter"
+    "지원되지 않거나 인식할 수 없는 CSV 포맷입니다." : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Unsupported or unrecognized CSV format."
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "필터"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "지원되지 않거나 인식할 수 없는 CSV 포맷입니다."
           }
         }
       }
     },
-    "해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다.": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "No data saved by this app exists within the selected period."
+    "총 %lld건 (성공 %lld건 / skip %lld건 / 오류 %lld건)" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total %1$lld records (Success: %2$lld / Skipped: %3$lld / Error: %4$lld)"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "총 %1$lld건 (성공 %2$lld건 / skip %3$lld건 / 오류 %4$lld건)"
           }
         }
       }
     },
-    "혈당 수치": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose Value"
+    "총 검증 결과" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Total Verification Result"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "혈당 수치"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "총 검증 결과"
           }
         }
       }
     },
-    "혈당수치": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose Value"
+    "최근 업로드 %lld건 일괄 삭제" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Batch Delete %1$lld Recently Uploaded Records"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "혈당수치"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "최근 업로드 %1$lld건 일괄 삭제"
           }
         }
       }
     },
-    "확인": {
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "OK"
+    "취소" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Cancel"
           }
         },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "확인"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "취소"
           }
         }
       }
     },
-    "형식이 잘못된 행입니다. (Line %@): %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "형식이 잘못된 행입니다. (Line %@): %@"
+    "측정 일시" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date & Time"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Malformed row. (Line %@): %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "측정 일시"
           }
         }
       }
     },
-    "날짜 형식이 잘못되었습니다. (Line %@): %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "날짜 형식이 잘못되었습니다. (Line %@): %@"
+    "측정일시" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Date & Time"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Invalid date format. (Line %@): %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "측정일시"
           }
         }
       }
     },
-    "혈당 수치 형식이 잘못되었습니다. (Line %@): %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "혈당 수치 형식이 잘못되었습니다. (Line %@): %@"
+    "파 일 명" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File Name"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Invalid glucose value format. (Line %@): %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파 일 명"
           }
         }
       }
     },
-    "지원되지 않거나 인식할 수 없는 CSV 포맷입니다.": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "지원되지 않거나 인식할 수 없는 CSV 포맷입니다."
+    "파일 읽는 중..." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Reading file..."
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unsupported or unrecognized CSV format."
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일 읽는 중..."
           }
         }
       }
     },
-    "Libre 데이터 컬럼 부족 (최소 6개 필요)": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Libre 데이터 컬럼 부족 (최소 6개 필요)"
+    "파일 정보" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "File Information"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not enough Libre data columns (minimum 6 required)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일 정보"
           }
         }
       }
     },
-    "리브레 예외 데이터(무시됨)": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "리브레 예외 데이터(무시됨)"
+    "파일을 선택하면 자동으로 포맷을 인식합니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Selecting a file will automatically recognize its format."
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Libre exception data (ignored)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "파일을 선택하면 자동으로 포맷을 인식합니다."
           }
         }
       }
     },
-    "날짜 파싱 실패: %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "날짜 파싱 실패: %@"
+    "포맷 인식" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Format Recognized"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Date parsing failed: %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포맷 인식"
           }
         }
       }
     },
-    "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): %@"
+    "포맷을 알 수 없어 파싱 불가" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Parsing failed due to unknown format"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose parsing failed (empty or non-numeric): %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "포맷을 알 수 없어 파싱 불가"
           }
         }
       }
     },
-    "정상 혈당 범위(20~600) 초과: %@ mg/dL": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "정상 혈당 범위(20~600) 초과: %@ mg/dL"
+    "필수 컬럼 누락" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Required columns missing"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose out of normal range (20~600): %@ mg/dL"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필수 컬럼 누락"
           }
         }
       }
     },
-    "Dexcom 데이터 컬럼 부족 (최소 8개 필요)": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom 데이터 컬럼 부족 (최소 8개 필요)"
+    "필터" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filter"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Not enough Dexcom data columns (minimum 8 required)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "필터"
           }
         }
       }
     },
-    "EGV 이외의 이벤트 무시 (%@)": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "EGV 이외의 이벤트 무시 (%@)"
+    "해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다." : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "No data saved by this app exists within the selected period."
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Ignored non-EGV event (%@)"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다."
           }
         }
       }
     },
-    "Dexcom 날짜 형식 파싱 실패: %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom 날짜 형식 파싱 실패: %@"
+    "혈당 수치" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucose Value"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom date parsing failed: %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "혈당 수치"
           }
         }
       }
     },
-    "Dexcom 혈당치 변환 실패: %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom 혈당치 변환 실패: %@"
+    "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucose parsing failed (empty or non-numeric): %@"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom glucose conversion failed: %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): %@"
           }
         }
       }
     },
-    "Dexcom 정상 혈당 범위 초과: %@ mg/dL": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom 정상 혈당 범위 초과: %@ mg/dL"
+    "혈당 수치 형식이 잘못되었습니다. (Line %@): %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Invalid glucose value format. (Line %@): %@"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom glucose out of normal range: %@ mg/dL"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "혈당 수치 형식이 잘못되었습니다. (Line %@): %@"
           }
         }
       }
     },
-    "포맷을 알 수 없어 파싱 불가": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "포맷을 알 수 없어 파싱 불가"
+    "혈당수치" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Glucose Value"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Parsing failed due to unknown format"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "혈당수치"
           }
         }
       }
     },
-    "필수 컬럼 누락": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "필수 컬럼 누락"
+    "형식이 잘못된 행입니다. (Line %@): %@" : {
+      "extractionState" : "stale",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Malformed row. (Line %@): %@"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Required columns missing"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "형식이 잘못된 행입니다. (Line %@): %@"
           }
         }
       }
     },
-    "날짜 형식 오류: %@": {
-      "localizations": {
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "날짜 형식 오류: %@"
+    "확인" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "OK"
           }
         },
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Date format error: %@"
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "확인"
           }
         }
       }
     }
   },
-  "version": "1.1"
+  "version" : "1.1"
 }
