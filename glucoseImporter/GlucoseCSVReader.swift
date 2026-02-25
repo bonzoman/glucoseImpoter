@@ -269,12 +269,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 // 기존 Libre 헤더 감지 로직 제거
                 
-                if lowerLine.contains("accu-chek") {
-                    detectedVendor = .accuChek
-                    detectedUnit = .mgDL
-                    currentDetection = createDetection(vendor: .accuChek, unit: .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: "dd.MM.yyyy HH:mm", separator: ";")
-                    continue
-                } else if lineNumber <= 5 {
+                if lineNumber <= 5 {
                     // 첫 몇 줄 범용 탐색: 단순 "날짜,값" 형태
                     let comps = trimmedLine.split(separator: ",", omittingEmptySubsequences: false)
                     if comps.count >= 2 {

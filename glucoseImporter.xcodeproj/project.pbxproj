@@ -6,6 +6,10 @@
 	objectVersion = 77;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		0B33B8422F4F2BC20072A9BF /* Localizable.xcstrings in Resources */ = {isa = PBXBuildFile; fileRef = 0B33B8412F4F2BC20072A9BF /* Localizable.xcstrings */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXContainerItemProxy section */
 		0BAEAC402F4841FC00B60480 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -24,6 +28,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		0B33B8412F4F2BC20072A9BF /* Localizable.xcstrings */ = {isa = PBXFileReference; lastKnownFileType = text.json.xcstrings; path = Localizable.xcstrings; sourceTree = "<group>"; };
 		0BAEAC302F4841FB00B60480 /* glucoseImporter.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = glucoseImporter.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BAEAC3F2F4841FC00B60480 /* glucoseImporterTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = glucoseImporterTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		0BAEAC492F4841FC00B60480 /* glucoseImporterUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = glucoseImporterUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -76,6 +81,7 @@
 		0BAEAC272F4841FB00B60480 = {
 			isa = PBXGroup;
 			children = (
+				0B33B8412F4F2BC20072A9BF /* Localizable.xcstrings */,
 				0BAEAC322F4841FB00B60480 /* glucoseImporter */,
 				0BAEAC422F4841FC00B60480 /* glucoseImporterTests */,
 				0BAEAC4C2F4841FC00B60480 /* glucoseImporterUITests */,
@@ -215,6 +221,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				0B33B8422F4F2BC20072A9BF /* Localizable.xcstrings in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -332,6 +339,7 @@
 				ONLY_ACTIVE_ARCH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 			};
 			name = Debug;
@@ -389,6 +397,7 @@
 				MTL_FAST_MATH = YES;
 				SDKROOT = iphoneos;
 				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_EMIT_LOC_STRINGS = YES;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = Release;
@@ -404,6 +413,8 @@
 				DEVELOPMENT_TEAM = 6N5396RU93;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GlueSync;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "혈당 데이터를 건강 앱에 저장하기 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "혈당 데이터를 건강 앱에 저장하기 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
@@ -444,6 +455,8 @@
 				DEVELOPMENT_TEAM = 6N5396RU93;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = GlueSync;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.healthcare-fitness";
 				INFOPLIST_KEY_NSHealthShareUsageDescription = "혈당 데이터를 건강 앱에 저장하기 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_NSHealthUpdateUsageDescription = "혈당 데이터를 건강 앱에 저장하기 위해 권한이 필요합니다.";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;

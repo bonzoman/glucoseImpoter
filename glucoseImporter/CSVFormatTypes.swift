@@ -2,7 +2,6 @@ import Foundation
 
 /// 지원하는 CSV 공급업체 형식
 public enum CSVVendorType: String, CaseIterable, Identifiable {
-    case accuChek = "Accu-Chek"
     case dexcom = "Dexcom"
     case libre = "Freestyle Libre"
     case custom = "Custom/Unknown"
