@@ -1,0 +1,16 @@
+# Xcode
+build/
+DerivedData/
+*.moved-aside
+*.xcuserstate
+*.assetcache
+
+# macOS
+.DS_Store
+*.swp
+*.lock
+.LSOverride
+
+# Glucose Importer
+*.csv
+*.xlsx
