@@ -151,19 +151,22 @@ struct ContentView: View {
                             .disabled(!isHealthKitAuthorized)
                             
                             // 4. 지원 및 문의 (이메일 폼)
-                            Button(action: {
-                                if let url = URL(string: "mailto:bonzoman@gmail.com?subject=[GlucoseImporter]%20CSV%20포맷%20추가%20및%20오류%20문의") {
-                                    UIApplication.shared.open(url)
+                            HStack {
+                                Spacer()
+                                Button(action: {
+                                    if let url = URL(string: "mailto:bonzoman@gmail.com?subject=[GlucoseImporter]문의") {
+                                        UIApplication.shared.open(url)
+                                    }
+                                }) {
+                                    HStack(spacing: 6) {
+                                        Image(systemName: "envelope")
+                                        Text("문의")
+                                    }
+                                    .font(.footnote)
+                                    .foregroundColor(.secondary)
+                                    .padding(.vertical, 8)
+                                    .padding(.horizontal, 12)
                                 }
-                            }) {
-                                HStack(spacing: 6) {
-                                    Image(systemName: "envelope")
-                                    Text("지원되지 않는 CSV 형식 제보 및 문의")
-                                }
-                                .font(.footnote)
-                                .foregroundColor(.secondary)
-                                .padding(.vertical, 8)
-                                .padding(.horizontal, 12)
                             }
                             
                         }

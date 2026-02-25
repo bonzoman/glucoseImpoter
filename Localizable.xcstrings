@@ -1,7 +1,750 @@
 {
-  "sourceLanguage" : "en",
-  "strings" : {
-
+  "sourceLanguage": "en",
+  "strings": {
+    "": {},
+    "%@ 파일입니다": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%@ file."
+          }
+        }
+      }
+    },
+    "%lld": {},
+    "%lld 열: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld Column: %2$@"
+          }
+        }
+      }
+    },
+    "%lld건 skip 처리됨 (사유: %@)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld skipped (Reason: %2$@)"
+          }
+        }
+      }
+    },
+    "%lld건의 데이터가 HealthKit에서 영구적으로 삭제됩니다. 계속하시겠습니까?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld records will be permanently deleted from HealthKit. Do you want to continue?"
+          }
+        }
+      }
+    },
+    "%lld건의 데이터가 안전하게 저장되었습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld records have been securely saved."
+          }
+        }
+      }
+    },
+    "%lld건의 삭제 대상이 존재합니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "%1$lld records exist for deletion."
+          }
+        }
+      }
+    },
+    "+ %lld건의 오류가 더 있습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ %1$lld more errors."
+          }
+        }
+      }
+    },
+    "+ %lld건이 더 있습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "+ %1$lld more records."
+          }
+        }
+      }
+    },
+    "CSV 파일 선택 및 업로드": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Select and Upload CSV File"
+          }
+        }
+      }
+    },
+    "Glucose Importer": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glucose Importer"
+          }
+        }
+      }
+    },
+    "HealthKit 저장": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save to HealthKit"
+          }
+        }
+      }
+    },
+    "HealthKit에 데이터 저장": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Data to HealthKit"
+          }
+        }
+      }
+    },
+    "Line": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line"
+          }
+        }
+      }
+    },
+    "mg/dL": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "mg/dL"
+          }
+        }
+      }
+    },
+    "검증이 통과된 %lld건의 데이터를 HealthKit에 기록하시겠습니까?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Do you want to save %1$lld verified records to HealthKit?"
+          }
+        }
+      }
+    },
+    "과거 데이터 수동 삭제 (기간 지정)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Manual Deletion of Past Data (by Period)"
+          }
+        }
+      }
+    },
+    "기간 설정 (일자 기준)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Set Period (by Date)"
+          }
+        }
+      }
+    },
+    "기록 삭제": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete Records"
+          }
+        }
+      }
+    },
+    "단위": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unit"
+          }
+        }
+      }
+    },
+    "데이터가 없습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data available."
+          }
+        }
+      }
+    },
+    "데이터를 불러올 수 없습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Failed to load data."
+          }
+        }
+      }
+    },
+    "모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "All data is securely processed on this device and is never transmitted to external servers."
+          }
+        }
+      }
+    },
+    "문의": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Inquiry"
+          }
+        }
+      }
+    },
+    "미리보기 (최대 100건)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Preview (Max 100 records)"
+          }
+        }
+      }
+    },
+    "삭제": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Delete"
+          }
+        }
+      }
+    },
+    "삭제 대상 검색 중...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Searching for records to delete..."
+          }
+        }
+      }
+    },
+    "삭제 대상 조회": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Check Records to Delete"
+          }
+        }
+      }
+    },
+    "삭제 실행": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Execute Deletion"
+          }
+        }
+      }
+    },
+    "삭제 진행 중...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Deleting..."
+          }
+        }
+      }
+    },
+    "성공 (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Success (%1$lld)"
+          }
+        }
+      }
+    },
+    "수동 포맷으로 파싱 시도": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Attempt Parsing with Manual Format"
+          }
+        }
+      }
+    },
+    "시작일": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Start Date"
+          }
+        }
+      }
+    },
+    "아래 데이터 열(Column)을 데이터 타입에 맞게 매핑해 주세요.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please map the data columns below to the correct data types."
+          }
+        }
+      }
+    },
+    "안내": {},
+    "알 수 없는 포맷": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown Format"
+          }
+        }
+      }
+    },
+    "알 수 없는 포맷 감지됨": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unknown Format Detected"
+          }
+        }
+      }
+    },
+    "업로드 미리보기": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Upload Preview"
+          }
+        }
+      }
+    },
+    "오류 (%lld)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error (%1$lld)"
+          }
+        }
+      }
+    },
+    "오류 내역": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error Details"
+          }
+        }
+      }
+    },
+    "오류 발생": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Error Occurred"
+          }
+        }
+      }
+    },
+    "오류 사유": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reason for Error"
+          }
+        }
+      }
+    },
+    "오류 없음": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No Errors"
+          }
+        }
+      }
+    },
+    "원본 데이터": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Raw Data"
+          }
+        }
+      }
+    },
+    "이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다.": {},
+    "저장": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save"
+          }
+        }
+      }
+    },
+    "저장 실행": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Execute Save"
+          }
+        }
+      }
+    },
+    "저장 완료": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Save Complete"
+          }
+        }
+      }
+    },
+    "정말 삭제하시겠습니까?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Are you sure you want to delete?"
+          }
+        }
+      }
+    },
+    "종료일": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "End Date"
+          }
+        }
+      }
+    },
+    "중복 데이터 발견": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Duplicate Data Found"
+          }
+        }
+      }
+    },
+    "총 %lld건 (성공 %lld건 / skip %lld건 / 오류 %lld건)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total %1$lld records (Success: %2$lld / Skipped: %3$lld / Error: %4$lld)"
+          }
+        }
+      }
+    },
+    "총 검증 결과": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Total Verification Result"
+          }
+        }
+      }
+    },
+    "최근 업로드 %lld건 일괄 삭제": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batch Delete %1$lld Recently Uploaded Records"
+          }
+        }
+      }
+    },
+    "취소": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Cancel"
+          }
+        }
+      }
+    },
+    "측정 일시": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date & Time"
+          }
+        }
+      }
+    },
+    "측정일시": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date & Time"
+          }
+        }
+      }
+    },
+    "파 일 명": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Name"
+          }
+        }
+      }
+    },
+    "파일 읽는 중...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Reading file..."
+          }
+        }
+      }
+    },
+    "파일 정보": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "File Information"
+          }
+        }
+      }
+    },
+    "파일을 선택하면 자동으로 포맷을 인식합니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Selecting a file will automatically recognize its format."
+          }
+        }
+      }
+    },
+    "포맷 인식": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Format Recognized"
+          }
+        }
+      }
+    },
+    "필터": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Filter"
+          }
+        }
+      }
+    },
+    "해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data saved by this app exists within the selected period."
+          }
+        }
+      }
+    },
+    "혈당 수치": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glucose Value"
+          }
+        }
+      }
+    },
+    "혈당수치": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glucose Value"
+          }
+        }
+      }
+    },
+    "확인": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "OK"
+          }
+        }
+      }
+    },
+    "마지막 업로드 %lld건 일괄삭제": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Batch Delete Last Upload (%1$lld records)"
+          }
+        }
+      }
+    },
+    "이 앱(Glucose Importer)을 통해 넣은 데이터만 삭제 대상이 됩니다.\\n다른 앱에서 기록한 타사 데이터는 절대로 삭제되지 않습니다.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Only data added through this app (Glucose Importer) will be deleted.\\nThird-party data logged by other apps will never be deleted."
+          }
+        }
+      }
+    },
+    "지원되지 않는 CSV 형식 제보 및 문의": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Report unsupported CSV formats & Inquiries"
+          }
+        }
+      }
+    },
+    "저장 진행 중...": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Saving..."
+          }
+        }
+      }
+    },
+    "선택한 기간에 이미 저장된 혈당 데이터가 존재합니다.\\n어떻게 처리하시겠습니까?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glucose data already exists for the selected period.\\nHow would you like to proceed?"
+          }
+        }
+      }
+    },
+    "앱 설정 열기": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Open App Settings"
+          }
+        }
+      }
+    },
+    "HealthKit 권한 필요": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "HealthKit Permission Required"
+          }
+        }
+      }
+    },
+    "데이터 저장을 위해 Health 설정을 확인해주세요.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Please check your Health settings to save data."
+          }
+        }
+      }
+    },
+    "건너뛰기": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skip"
+          }
+        }
+      }
+    },
+    "선택한 기간(시작일~종료일)에 추가로 저장된 혈당데이터가 있습니다. 추가로 저장하시겠습니까?": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Additional glucose data has been saved during the selected period. Do you want to save more?"
+          }
+        }
+      }
+    }
   },
-  "version" : "1.1"
+  "version": "1.1"
 }
