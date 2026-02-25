@@ -30,81 +30,128 @@ struct ContentView: View {
 
     var body: some View {
         NavigationStack {
-            VStack(spacing: 0) {
-                // 상단 프라이버시 알림 영역
-                HStack {
-                    Image(systemName: "lock.shield.fill")
-                        .foregroundColor(.green)
-                    Text("모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다.")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .multilineTextAlignment(.leading)
-                    Spacer()
-                }
-                .padding()
-                .background(Color(UIColor.secondarySystemBackground))
+            ZStack {
+                Color(UIColor.systemGroupedBackground)
+                    .ignoresSafeArea()
                 
-                List {
-                    Section(header: Text("데이터 가져오기"), footer: Text("CSV 파일을 선택하면 자동으로 포맷을 인식합니다. 인식 실패 시 수동으로 형태를 지정할 수 있습니다.")) {
-                        Button(action: {
-                            showFileImporter = true
-                        }) {
-                            HStack {
-                                Image(systemName: "doc.badge.plus")
-                                Text("CSV 파일 선택 및 업로드")
-                                    .fontWeight(.medium)
-                            }
-                        }
-                        .disabled(!isHealthKitAuthorized)
+                VStack(spacing: 0) {
+                    // 상단 프라이버시 알림 영역 (고정)
+                    HStack {
+                        Image(systemName: "lock.shield.fill")
+                            .foregroundColor(.green)
+                            .font(.system(size: 18))
+                        Text("모든 데이터는 서버 등 외부로 전송되지 않고 기기 내에서만 안전하게 처리됩니다.")
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                            .multilineTextAlignment(.leading)
+                        Spacer()
                     }
+                    .padding()
+                    .background(Color(UIColor.secondarySystemBackground))
                     
-                    Section(header: Text("데이터 관리")) {
-                        if !lastImportBatchID.isEmpty {
-                            HStack {
-                                Button(role: .destructive, action: {
-                                    rollbackLastImport()
-                                }) {
-                                    HStack {
-                                        if isRollingBack {
-                                            ProgressView()
-                                                .progressViewStyle(CircularProgressViewStyle())
-                                                .padding(.trailing, 4)
-                                            Text("삭제 진행 중...")
-                                                .lineLimit(1)
-                                        } else {
-                                            Image(systemName: "arrow.uturn.backward.circle")
-                                            Text("마지막 업로드 \(lastImportCount)건 일괄삭제")
-                                                .lineLimit(1)
-                                                .minimumScaleFactor(0.8)
-                                        }
+                    ScrollView {
+                        VStack(spacing: 24) {
+                            
+                            // 1. 메인 기능: CSV 업로드 (Hero Card)
+                            Button(action: {
+                                showFileImporter = true
+                            }) {
+                                VStack(spacing: 16) {
+                                    Image(systemName: "doc.badge.plus")
+                                        .font(.system(size: 48, weight: .regular))
+                                    
+                                    VStack(spacing: 4) {
+                                        Text("CSV 파일 선택 및 업로드")
+                                            .font(.title3)
+                                            .fontWeight(.bold)
+                                        
+                                        Text("파일을 선택하면 자동으로 포맷을 인식합니다.")
+                                            .font(.footnote)
+                                            .opacity(0.8)
                                     }
                                 }
-                                .disabled(!isHealthKitAuthorized || isRollingBack)
-                                
-                                Spacer()
-                                
-                                Button(action: {
-                                    // 수동 닫기: 롤백 기능(버튼) 숨김 처리
-                                    lastImportBatchID = ""
-                                    lastImportCount = 0
-                                }) {
-                                    Image(systemName: "xmark.circle.fill")
-                                        .foregroundColor(.secondary)
+                                .foregroundColor(.white)
+                                .frame(maxWidth: .infinity)
+                                .padding(.vertical, 40)
+                                .padding(.horizontal, 20)
+                                .background(
+                                    LinearGradient(gradient: Gradient(colors: [Color.blue, Color.teal]), startPoint: .topLeading, endPoint: .bottomTrailing)
+                                )
+                                .cornerRadius(20)
+                                .shadow(color: Color.teal.opacity(0.3), radius: 10, x: 0, y: 5)
+                            }
+                            .buttonStyle(PlainButtonStyle())
+                            .disabled(!isHealthKitAuthorized)
+                            .opacity(isHealthKitAuthorized ? 1.0 : 0.6)
+                            .padding(.top, 24)
+                            
+                            // 2. 롤백(최근 동기화 n건) Floating Card
+                            if !lastImportBatchID.isEmpty {
+                                HStack {
+                                    Button(action: {
+                                        rollbackLastImport()
+                                    }) {
+                                        HStack {
+                                            if isRollingBack {
+                                                ProgressView()
+                                                    .progressViewStyle(CircularProgressViewStyle())
+                                                    .padding(.trailing, 4)
+                                                Text("삭제 진행 중...")
+                                                    .font(.subheadline)
+                                                    .foregroundColor(.red)
+                                            } else {
+                                                Image(systemName: "arrow.uturn.backward.circle.fill")
+                                                    .foregroundColor(.red)
+                                                    .font(.system(size: 20))
+                                                Text("최근 업로드 \(lastImportCount)건 일괄 삭제")
+                                                    .font(.subheadline)
+                                                    .fontWeight(.medium)
+                                                    .foregroundColor(.red)
+                                            }
+                                        }
+                                        .padding(.vertical, 12)
+                                        .padding(.horizontal, 16)
+                                    }
+                                    .disabled(!isHealthKitAuthorized || isRollingBack)
+                                    
+                                    Spacer()
+                                    
+                                    Button(action: {
+                                        // 수동 닫기: 롤백 기능 숨김
+                                        lastImportBatchID = ""
+                                        lastImportCount = 0
+                                    }) {
+                                        Image(systemName: "xmark.circle.fill")
+                                            .foregroundColor(Color(UIColor.tertiaryLabel))
+                                            .font(.system(size: 20))
+                                    }
+                                    .padding(.trailing, 16)
                                 }
-                                .buttonStyle(BorderlessButtonStyle()) // Row 클릭 간섭 방지
+                                .background(Color(UIColor.secondarySystemGroupedBackground))
+                                .cornerRadius(12)
+                                .shadow(color: Color.black.opacity(0.05), radius: 5, x: 0, y: 2)
                             }
-                        }
-                        
-                        Button(role: .destructive, action: {
-                            deleteTargetCount = nil
-                            showDatePicker = true
-                        }) {
-                            HStack {
-                                Image(systemName: "calendar.badge.minus")
-                                Text("과거 기록 삭제 (기간 지정)")
+                            
+                            Spacer(minLength: 40)
+                            
+                            // 3. 과거 기록 삭제 (보조 텍스트 버튼으로 축소)
+                            Button(action: {
+                                deleteTargetCount = nil
+                                showDatePicker = true
+                            }) {
+                                HStack(spacing: 6) {
+                                    Image(systemName: "trash")
+                                    Text("과거 데이터 수동 삭제 (기간 지정)")
+                                }
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                                .padding(.vertical, 8)
+                                .padding(.horizontal, 12)
                             }
+                            .disabled(!isHealthKitAuthorized)
+                            
                         }
-                        .disabled(!isHealthKitAuthorized)
+                        .padding(.horizontal)
                     }
                 }
             }
