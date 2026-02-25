@@ -130,7 +130,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     if lineNumber <= 5 {
                         totalReadLines -= 1 // 헤더 행 무시
                     } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Libre 데이터 컬럼 부족 (최소 6개 필요)"))
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Libre 데이터 컬럼 부족 (최소 6개 필요)")))
                     }
                     continue
                 }
@@ -141,7 +141,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 // 기록 유형(0 또는 1) 필터링 (그 외의 데이터는 예외 명시 후 스킵)
                 if recordType != "0" && recordType != "1" {
                     skippedCount += 1
-                    skippedReason = "리브레 예외 데이터(무시됨)"
+                    skippedReason = String(localized: "리브레 예외 데이터(무시됨)")
                     continue
                 }
                 
@@ -164,7 +164,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     if lineNumber <= 5 {
                         totalReadLines -= 1
                     } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 파싱 실패: \(dateString)"))
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "날짜 파싱 실패: \(dateString)")))
                     }
                     continue
                 }
@@ -177,14 +177,14 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     if lineNumber <= 5 {
                         totalReadLines -= 1
                     } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): \(valueString)"))
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): \(valueString)")))
                     }
                     continue
                 }
                 
                 // 단위 변환 불필요 (Libre CSV는 기본적으로 mg/dL이라고 간주하거나, 사용자 타겟 단위 맞춤. 여기서는 일단 그대로 수용)
                 if value < 20.0 || value > 600.0 {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "정상 혈당 범위(20~600) 초과: \(value) mg/dL"))
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "정상 혈당 범위(20~600) 초과: \(value) mg/dL")))
                     continue
                 }
                 
@@ -215,7 +215,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     if lineNumber <= 15 {
                         totalReadLines -= 1
                     } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 데이터 컬럼 부족 (최소 8개 필요)"))
+                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Dexcom 데이터 컬럼 부족 (최소 8개 필요)")))
                     }
                     continue
                 }
@@ -227,7 +227,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 // Event Type이 'EGV' (Estimated Glucose Value)인 경우만 유효한 연속혈당값으로 인정하고 나머지는 Skip 처리
                 guard eventType == "EGV" else {
                     skippedCount += 1
-                    skippedReason = "EGV 이외의 이벤트 무시 (\(eventType))"
+                    skippedReason = String(localized: "EGV 이외의 이벤트 무시 (\(eventType))")
                     continue
                 }
                 
@@ -238,18 +238,18 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 df.dateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                 
                 guard let validDate = df.date(from: dateString) else {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 날짜 형식 파싱 실패: \(dateString)"))
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Dexcom 날짜 형식 파싱 실패: \(dateString)")))
                     continue
                 }
                 determinedDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                 
                 guard !valueString.isEmpty, let value = Double(valueString) else {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 혈당치 변환 실패: \(valueString)"))
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Dexcom 혈당치 변환 실패: \(valueString)")))
                     continue
                 }
                 
                 if value < 20.0 || value > 600.0 {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "Dexcom 정상 혈당 범위 초과: \(value) mg/dL"))
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Dexcom 정상 혈당 범위 초과: \(value) mg/dL")))
                     continue
                 }
                 
@@ -312,7 +312,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             // 기존 FormatDetection 기반 벤더 (Dexcom, AccuChek, Custom) 파싱 수행
             guard let format = currentDetection, !isLibreFormat else {
                 if !isLibreFormat {
-                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "포맷을 알 수 없어 파싱 불가"))
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "포맷을 알 수 없어 파싱 불가")))
                 }
                 continue 
             }
@@ -320,7 +320,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             let components = trimmedLine.split(separator: format.separator, omittingEmptySubsequences: false)
             
             guard components.count > format.dateColumnIndex, components.count > format.valueColumnIndex else {
-                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "필수 컬럼 누락"))
+                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "필수 컬럼 누락")))
                 continue
             }
             
@@ -353,7 +353,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
                     continue
                 }
-                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "날짜 형식 오류: \(dateString)"))
+                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "날짜 형식 오류: \(dateString)")))
                 continue
             }
             
@@ -371,7 +371,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     continue
                 }
                 
-                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "수치 형식 오류 (빈 값 포함): \(valueString)"))
+                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "수치 형식 오류 (빈 값 포함): \(valueString)")))
                 continue
             }
             
@@ -385,7 +385,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             let mgDLValue = format.unit.convertToMgDL(value: originalValue)
             
             if mgDLValue < 20.0 || mgDLValue > 600.0 {
-                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: "정상 혈당 범위(20~600) 초과: \(mgDLValue) mg/dL"))
+                invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "정상 혈당 범위(20~600) 초과: \(mgDLValue) mg/dL")))
                 continue
             }
             validRecords.append(GlucoseRecord(timestamp: validDate, value: mgDLValue))

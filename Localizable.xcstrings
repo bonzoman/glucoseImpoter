@@ -542,9 +542,15 @@
     },
     "안내": {
       "localizations": {
-        "ko": {
+        "en": {
           "stringUnit": {
             "state": "translated",
+            "value": "Information"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "needs_review",
             "value": "안내"
           }
         }
@@ -1058,6 +1064,278 @@
           "stringUnit": {
             "state": "translated",
             "value": "확인"
+          }
+        }
+      }
+    },
+    "형식이 잘못된 행입니다. (Line %@): %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "형식이 잘못된 행입니다. (Line %@): %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Malformed row. (Line %@): %@"
+          }
+        }
+      }
+    },
+    "날짜 형식이 잘못되었습니다. (Line %@): %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날짜 형식이 잘못되었습니다. (Line %@): %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid date format. (Line %@): %@"
+          }
+        }
+      }
+    },
+    "혈당 수치 형식이 잘못되었습니다. (Line %@): %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "혈당 수치 형식이 잘못되었습니다. (Line %@): %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Invalid glucose value format. (Line %@): %@"
+          }
+        }
+      }
+    },
+    "지원되지 않거나 인식할 수 없는 CSV 포맷입니다.": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "지원되지 않거나 인식할 수 없는 CSV 포맷입니다."
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Unsupported or unrecognized CSV format."
+          }
+        }
+      }
+    },
+    "Libre 데이터 컬럼 부족 (최소 6개 필요)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libre 데이터 컬럼 부족 (최소 6개 필요)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not enough Libre data columns (minimum 6 required)"
+          }
+        }
+      }
+    },
+    "리브레 예외 데이터(무시됨)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "리브레 예외 데이터(무시됨)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libre exception data (ignored)"
+          }
+        }
+      }
+    },
+    "날짜 파싱 실패: %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날짜 파싱 실패: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date parsing failed: %@"
+          }
+        }
+      }
+    },
+    "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glucose parsing failed (empty or non-numeric): %@"
+          }
+        }
+      }
+    },
+    "정상 혈당 범위(20~600) 초과: %@ mg/dL": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "정상 혈당 범위(20~600) 초과: %@ mg/dL"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Glucose out of normal range (20~600): %@ mg/dL"
+          }
+        }
+      }
+    },
+    "Dexcom 데이터 컬럼 부족 (최소 8개 필요)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom 데이터 컬럼 부족 (최소 8개 필요)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Not enough Dexcom data columns (minimum 8 required)"
+          }
+        }
+      }
+    },
+    "EGV 이외의 이벤트 무시 (%@)": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "EGV 이외의 이벤트 무시 (%@)"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Ignored non-EGV event (%@)"
+          }
+        }
+      }
+    },
+    "Dexcom 날짜 형식 파싱 실패: %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom 날짜 형식 파싱 실패: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom date parsing failed: %@"
+          }
+        }
+      }
+    },
+    "Dexcom 혈당치 변환 실패: %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom 혈당치 변환 실패: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom glucose conversion failed: %@"
+          }
+        }
+      }
+    },
+    "Dexcom 정상 혈당 범위 초과: %@ mg/dL": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom 정상 혈당 범위 초과: %@ mg/dL"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom glucose out of normal range: %@ mg/dL"
+          }
+        }
+      }
+    },
+    "포맷을 알 수 없어 파싱 불가": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "포맷을 알 수 없어 파싱 불가"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Parsing failed due to unknown format"
+          }
+        }
+      }
+    },
+    "필수 컬럼 누락": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "필수 컬럼 누락"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Required columns missing"
+          }
+        }
+      }
+    },
+    "날짜 형식 오류: %@": {
+      "localizations": {
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날짜 형식 오류: %@"
+          }
+        },
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Date format error: %@"
           }
         }
       }
