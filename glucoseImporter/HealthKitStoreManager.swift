@@ -10,10 +10,12 @@ public enum HealthKitStoreError: Error, LocalizedError {
     
     public var errorDescription: String? {
         switch self {
-        case .healthDataNotAvailable: return "이 기기에서는 HealthKit을 사용할 수 없습니다."
-        case .permissionDenied: return "혈당 기록 권한이 구 부여되지 않았습니다."
-        case .invalidQuantityType: return "혈당(QuantityType)을 생성할 수 없습니다."
-        case .saveFailed(let error): return "저장 실패: \(error.localizedDescription)"
+        case .healthDataNotAvailable: return String(localized: "이 기기에서는 HealthKit을 사용할 수 없습니다.")
+        case .permissionDenied: return String(localized: "혈당 기록 권한이 부여되지 않았습니다.")
+        case .invalidQuantityType: return String(localized: "혈당(QuantityType)을 생성할 수 없습니다.")
+        case .saveFailed(let error): 
+            let format = String(localized: "저장 실패: %@")
+            return String(format: format, error.localizedDescription)
         }
     }
 }
