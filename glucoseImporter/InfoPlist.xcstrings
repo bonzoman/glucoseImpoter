@@ -13,7 +13,7 @@
         "ko" : {
           "stringUnit" : {
             "state" : "translated",
-            "value" : "글루싱크"
+            "value" : "GlueSync"
           }
         }
       }
@@ -25,6 +25,12 @@
         "en" : {
           "stringUnit" : {
             "state" : "new",
+            "value" : "glucoseImporter"
+          }
+        },
+        "ko" : {
+          "stringUnit" : {
+            "state" : "translated",
             "value" : "glucoseImporter"
           }
         }
