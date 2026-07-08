@@ -1,0 +1,1 @@
+Import your blood sugar records into Apple Health in bulk with a simple CSV file!

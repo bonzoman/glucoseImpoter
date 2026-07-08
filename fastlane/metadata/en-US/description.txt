@@ -1,0 +1,2 @@
+Easily sync your blood sugar data exported from Excel or other apps to the Apple Health app. No need to manually enter hundreds of records—upload them all at once with a single file. Managing your health has never been easier.
+

@@ -14,3 +14,13 @@ DerivedData/
 # Glucose Importer
 *.csv
 *.xlsx
+
+# fastlane
+fastlane/.env
+fastlane/*.p8
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/test_output/
+fastlane/README.md
+# 심사 담당자 개인정보(이름/이메일/전화 등)는 로컬에만 보관
+fastlane/metadata/review_information/
