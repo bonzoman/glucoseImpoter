@@ -1,1 +1,3 @@
-
+Improved CSV import to support date formats from more countries.
+- Automatically recognizes many date formats, including yyyy-mm-dd, mm/dd/yyyy (US), and dd/mm/yyyy or dd.mm.yyyy (Europe).
+- Analyzes the whole file to determine day/month order, preventing dates from being misread.
