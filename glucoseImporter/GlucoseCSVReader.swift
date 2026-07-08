@@ -105,7 +105,12 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         }
         
         let lines = content.components(separatedBy: "\n")
-        
+
+        // 모호한 일/월 순서(예: 03/05/2024)를 파일 전체를 스캔해 1회 결정.
+        // manualConfig가 있으면 그 날짜 컬럼을, 없으면 관례적으로 첫 컬럼(0)을 기준으로 판단.
+        let ambiguityDateColumn = manualConfig?.dateColumnIndex ?? 0
+        let resolvedDateOrder = FlexibleDateParser.resolveOrder(lines: lines, dateColumnIndex: ambiguityDateColumn)
+
         print("📄 [CSVReader] 파일 읽기 시작 (총 \(lines.count)줄)")
         
         var lineNumber = 0
@@ -145,21 +150,13 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     continue
                 }
                 
-                // 날짜 파싱
+                // 날짜 파싱 (여러 나라 포맷 유연 파싱)
                 var date: Date? = nil
-                let fallbackFormatter = DateFormatter()
-                fallbackFormatter.locale = Locale(identifier: "en_US_POSIX")
-                fallbackFormatter.timeZone = TimeZone.current
-                let fallbackFormats = ["yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm"]
-                for fmt in fallbackFormats {
-                    fallbackFormatter.dateFormat = fmt
-                    if let d = fallbackFormatter.date(from: dateString) {
-                        date = d
-                        determinedDateFormat = fmt
-                        break
-                    }
+                if let parsed = FlexibleDateParser.parse(dateString, order: resolvedDateOrder) {
+                    date = parsed.date
+                    determinedDateFormat = parsed.format
                 }
-                
+
                 guard let validDate = date else {
                     if lineNumber <= 5 {
                         totalReadLines -= 1
@@ -273,20 +270,9 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     // 첫 몇 줄 범용 탐색: 단순 "날짜,값" 형태
                     let comps = trimmedLine.split(separator: ",", omittingEmptySubsequences: false)
                     if comps.count >= 2 {
-                        let cf = DateFormatter()
-                        cf.locale = Locale(identifier: "en_US_POSIX")
-                        cf.timeZone = TimeZone.current
-                        
-                        let formatsToTest = ["yyyy-MM-dd'T'HH:mm:ss", "yyyy-MM-dd HH:mm:ss", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm:ss", "MM/dd/yyyy HH:mm", "yyyy.MM.dd HH:mm", "yyyy.M.d HH:mm"]
-                        var foundFormat: String?
-                        for fmt in formatsToTest {
-                            cf.dateFormat = fmt
-                            if cf.date(from: String(comps[0].trimmingCharacters(in: .whitespacesAndNewlines))) != nil {
-                                foundFormat = fmt
-                                break
-                            }
-                        }
-                        
+                        let dateCandidate = String(comps[0].trimmingCharacters(in: .whitespacesAndNewlines))
+                        let foundFormat = FlexibleDateParser.parse(dateCandidate, order: resolvedDateOrder)?.format
+
                         if let validFormat = foundFormat, Double(comps[1].trimmingCharacters(in: .whitespacesAndNewlines)) != nil {
                             detectedVendor = .custom
                             currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: validFormat)
@@ -327,24 +313,14 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             let dateString = components[format.dateColumnIndex].trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t"))
             let valueString = components[format.valueColumnIndex].trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t"))
             
-            // 날짜 파싱 시도 (기본 포맷 먼저, 안되면 추가 포맷 시도)
-            var date = format.dateFormatter.date(from: dateString)
-            if date != nil {
+            // 날짜 파싱 시도: 사용자가 수동 지정한 포맷이 있으면 우선, 없으면 여러 나라 포맷 유연 파싱
+            var date: Date? = nil
+            if !format.dateFormatter.dateFormat.isEmpty, let d = format.dateFormatter.date(from: dateString) {
+                date = d
                 determinedDateFormat = format.dateFormatter.dateFormat
-            } else {
-                let fallbackFormatter = DateFormatter()
-                fallbackFormatter.locale = Locale(identifier: "en_US_POSIX")
-                fallbackFormatter.timeZone = TimeZone.current
-                // mm/dd/yyyy 포맷도 자동인식 목록에 추가
-                let fallbackFormats = ["yyyy-MM-dd'T'HH:mm:ss", "yyyy.M.d HH:mm", "yyyy.MM.dd HH:mm", "yyyy-MM-dd HH:mm", "yyyy/MM/dd HH:mm", "MM/dd/yyyy HH:mm", "MM/dd/yyyy HH:mm:ss", "dd.MM.yyyy HH:mm"]
-                for fmt in fallbackFormats {
-                    fallbackFormatter.dateFormat = fmt
-                    if let d = fallbackFormatter.date(from: dateString) {
-                        date = d
-                        determinedDateFormat = fmt
-                        break
-                    }
-                }
+            } else if let parsed = FlexibleDateParser.parse(dateString, order: resolvedDateOrder) {
+                date = parsed.date
+                determinedDateFormat = parsed.format
             }
             
             guard let validDate = date else {
