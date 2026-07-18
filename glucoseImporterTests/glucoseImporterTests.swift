@@ -228,3 +228,47 @@ struct GlucoseCSVReaderIntegrationTests {
         }
     }
 }
+
+// MARK: - 하이픈 구분 날짜 (dd-MM-yyyy)
+
+/// DateFormatter는 구분자(/ - .)를 호환되게 처리하므로 하이픈 날짜도
+/// 슬래시 포맷으로 매칭된다. 내부 포맷 이름이 아니라 "값"이 맞는지를 검증한다.
+@MainActor
+struct HyphenDateTests {
+    private func ymdhms(_ s: String, _ order: DateComponentOrder) -> String {
+        guard let r = FlexibleDateParser.parse(s, order: order) else { return "nil" }
+        let c = Calendar(identifier: .gregorian)
+            .dateComponents([.year, .month, .day, .hour, .minute, .second], from: r.date)
+        return "\(c.year!)-\(c.month!)-\(c.day!) \(c.hour!):\(c.minute!):\(c.second!)"
+    }
+
+    @Test func hyphenDayFirst() {
+        #expect(ymdhms("25-03-2024", .dayFirst) == "2024-3-25 0:0:0")
+        #expect(ymdhms("25-03-2024 08:05", .dayFirst) == "2024-3-25 8:5:0")
+        #expect(ymdhms("25-03-2024 08:05:30", .dayFirst) == "2024-3-25 8:5:30")
+    }
+
+    // 한 자리 일/월도 허용 (5-3-2024)
+    @Test func hyphenSingleDigit() {
+        #expect(ymdhms("5-3-2024", .dayFirst) == "2024-3-5 0:0:0")
+    }
+
+    @Test func hyphenMonthFirst() {
+        #expect(ymdhms("03-25-2024", .monthFirst) == "2024-3-25 0:0:0")
+        #expect(ymdhms("03-25-2024 08:05:30", .monthFirst) == "2024-3-25 8:5:30")
+    }
+
+    // 같은 하이픈이라도 연도-먼저(한국식)는 순서 설정과 무관하게 유지돼야 한다.
+    // dd-MM-yyyy 지원 때문에 yyyy-MM-dd가 깨지면 치명적이므로 반드시 검증.
+    @Test func yearFirstStaysYearFirst() {
+        #expect(ymdhms("2024-03-05", .dayFirst) == "2024-3-5 0:0:0")
+        #expect(ymdhms("2024-03-05", .monthFirst) == "2024-3-5 0:0:0")
+        #expect(ymdhms("2024-03-05 08:05", .dayFirst) == "2024-3-5 8:5:0")
+    }
+
+    // 파일 스캔이 하이픈 날짜에서도 일/월 순서를 판별하는지
+    @Test func resolvesOrderFromHyphenDates() {
+        let lines = ["date,glucose", "03-05-2024,120", "25-03-2024,130"]
+        #expect(FlexibleDateParser.resolveOrder(lines: lines, dateColumnIndex: 0) == .dayFirst)
+    }
+}
