@@ -194,23 +194,6 @@
         }
       }
     },
-    "Dexcom 정상 혈당 범위 초과: %@ mg/dL": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom glucose out of normal range: %@ mg/dL"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Dexcom 정상 혈당 범위 초과: %@ mg/dL"
-          }
-        }
-      }
-    },
     "Dexcom 정상 혈당 범위 초과: %lf mg/dL": {
       "localizations": {
         "en": {
@@ -464,23 +447,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "날짜 형식 오류: %@"
-          }
-        }
-      }
-    },
-    "날짜 형식이 잘못되었습니다. (Line %@): %@": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Invalid date format. (Line %@): %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "날짜 형식이 잘못되었습니다. (Line %@): %@"
           }
         }
       }
@@ -1129,23 +1095,6 @@
         }
       }
     },
-    "정상 혈당 범위(20~600) 초과: %@ mg/dL": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Glucose out of normal range (20~600): %@ mg/dL"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "정상 혈당 범위(20~600) 초과: %@ mg/dL"
-          }
-        }
-      }
-    },
     "정상 혈당 범위(20~600) 초과: %lf mg/dL": {
       "localizations": {
         "en": {
@@ -1190,23 +1139,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "중복 데이터 발견"
-          }
-        }
-      }
-    },
-    "지원되지 않거나 인식할 수 없는 CSV 포맷입니다.": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Unsupported or unrecognized CSV format."
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "지원되지 않거나 인식할 수 없는 CSV 포맷입니다."
           }
         }
       }
@@ -1550,23 +1482,6 @@
         }
       }
     },
-    "혈당 수치 형식이 잘못되었습니다. (Line %@): %@": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Invalid glucose value format. (Line %@): %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "혈당 수치 형식이 잘못되었습니다. (Line %@): %@"
-          }
-        }
-      }
-    },
     "혈당(QuantityType)을 생성할 수 없습니다.": {
       "localizations": {
         "en": {
@@ -1595,23 +1510,6 @@
           "stringUnit": {
             "state": "translated",
             "value": "혈당수치"
-          }
-        }
-      }
-    },
-    "형식이 잘못된 행입니다. (Line %@): %@": {
-      "extractionState": "stale",
-      "localizations": {
-        "en": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "Malformed row. (Line %@): %@"
-          }
-        },
-        "ko": {
-          "stringUnit": {
-            "state": "translated",
-            "value": "형식이 잘못된 행입니다. (Line %@): %@"
           }
         }
       }
