@@ -75,7 +75,7 @@ public final class HealthKitStoreManager {
         
         // 중복 판별 최적화를 위해 Set 사용 (mg/dL 수치 단위까지 해시 처리)
         // HKQuantitySample은 고유의 UUID를 가지지만, 우리가 판별할 중복 기준은 '같은 시간대(분 단위)' + '같은 수치' 입니다.
-        var existingSignatures = Set(existingSamples.map { sample -> String in
+        let existingSignatures = Set(existingSamples.map { sample -> String in
             let date = Int(sample.startDate.timeIntervalSince1970)
             let value = sample.quantity.doubleValue(for: HKUnit(from: "mg/dL"))
             return "\(date)_\(value)"
