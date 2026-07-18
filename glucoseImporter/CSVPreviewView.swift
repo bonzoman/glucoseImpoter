@@ -241,7 +241,7 @@ public struct CSVPreviewView: View {
                 extractSampleColumns()
             }
         }
-        .onChange(of: viewModel.isImporting) { isImporting in
+        .onChange(of: viewModel.isImporting) { _, isImporting in
             if !isImporting {
                 extractSampleColumns()
             }

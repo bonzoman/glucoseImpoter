@@ -77,7 +77,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         var skippedReason: String? = nil
         
         var detectedVendor: CSVVendorType = .custom
-        var detectedUnit: GlucoseUnit = targetUnit ?? .mgDL
+        let detectedUnit: GlucoseUnit = targetUnit ?? .mgDL
         var currentDetection: FormatDetection? = nil
         var isLibreFormat = false
         var isDexcomFormat = false
@@ -257,7 +257,6 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             
             // 기존 비-Libre, 비-Dexcom 벤더의 헤더 감지 로직
             if !isLibreFormat && !isDexcomFormat && currentDetection == nil && detectedVendor != .custom {
-                let lowerLine = trimmedLine.lowercased().replacingOccurrences(of: " ", with: "")
                 print("🔍 [CSVReader] L\(lineNumber) 감지: \(trimmedLine)")
                 
                 // 기존 Libre 헤더 감지 로직 제거
