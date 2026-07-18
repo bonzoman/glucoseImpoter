@@ -337,3 +337,53 @@ struct RealLibreFileTests {
         #expect(r.validRecords[1].value == 119)
     }
 }
+
+// MARK: - 조용히 버려지는 행 방지 (회귀 테스트)
+
+@MainActor
+struct SilentDropTests {
+
+    private func makeCSV(_ contents: String) throws -> URL {
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("drop_\(UUID().uuidString).csv")
+        try contents.write(to: url, atomically: true, encoding: .utf8)
+        return url
+    }
+
+    /// 데이터 행이 파일 앞부분(5줄 이내)에 있고 날짜가 깨져도
+    /// 헤더로 간주해 사라지지 않고 반드시 오류로 보고되어야 한다.
+    @Test func libreDataRowFailureIsReportedNotSwallowed() async throws {
+        let csv = """
+        혈당 데이터,생성일,2026-07-18 13:27 UTC,생성자,승준 오
+        장치,일련 번호,장치 타임스탬프,기록 유형,과거 혈당 mg/dL,혈당 스캔 mg/dL
+        FreeStyle LibreLink,E0E84C13,날짜아님,0,136,,
+        """
+        let url = try makeCSV(csv)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let r = try await GlucoseCSVReader().read(from: url, targetUnit: .mgDL)
+
+        #expect(r.validRecords.isEmpty)
+        // 예전에는 오류 0건으로 조용히 사라졌다
+        #expect(r.invalidRecords.count == 1)
+        #expect(r.invalidRecords.first?.lineNumber == 3)
+    }
+
+    /// 정상 파일에서도 어떤 행을 헤더로 건너뛰었는지 추적되어야 한다.
+    @Test func headerRowsAreTracked() async throws {
+        let csv = """
+        혈당 데이터,생성일,2026-07-18 13:27 UTC,생성자,승준 오
+        장치,일련 번호,장치 타임스탬프,기록 유형,과거 혈당 mg/dL,혈당 스캔 mg/dL
+        FreeStyle LibreLink,E0E84C13,20-02-2026 22:34,0,136,,
+        """
+        let url = try makeCSV(csv)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let r = try await GlucoseCSVReader().read(from: url, targetUnit: .mgDL)
+
+        #expect(r.validRecords.count == 1)
+        // 상단 헤더 2줄이 기록되어야 한다
+        #expect(r.headerSkippedRows.count == 2)
+        #expect(r.headerSkippedRows.allSatisfy { $0.lineNumber <= 2 })
+    }
+}

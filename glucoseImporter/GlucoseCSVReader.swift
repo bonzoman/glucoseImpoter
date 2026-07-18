@@ -135,6 +135,18 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         
         var lineNumber = 0
         var totalReadLines = 0
+
+        // 헤더/메타데이터로 간주해 건너뛴 행을 기록한다.
+        // 아무 것도 임포트되지 않았을 때 "왜 0건인지"를 사용자에게 보여주기 위한 것으로,
+        // 이 기록이 없으면 실패가 조용히 사라져 원인을 알 수 없다.
+        var headerSkippedRows: [CSVParseErrorRecord] = []
+        func skipAsHeader(_ line: Int, _ raw: String, _ reason: String) {
+            totalReadLines -= 1
+            if headerSkippedRows.count < 20 {
+                headerSkippedRows.append(CSVParseErrorRecord(lineNumber: line, rawLine: raw, reason: reason))
+            }
+        }
+
         for line in lines {
             lineNumber += 1
             // \r 찌꺼기 제거 및 공백 트림
@@ -150,13 +162,12 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 let components = trimmedLine.split(separator: delimiter, omittingEmptySubsequences: false)
                 
-                // 요구된 인덱스 규칙 준수를 위한 최소 컬럼 개수 확인 (스캔혈당은 인덱스 5)
+                // 이 분기는 'FreeStyle Libre'로 시작하는 행만 들어오므로 헤더일 수 없다.
+                // 따라서 실패는 줄 번호와 무관하게 항상 오류로 보고한다.
+                // (예전에는 5줄 이내면 헤더로 간주해 버려서, 데이터가 파일 앞부분에 있으면
+                //  전량 실패해도 오류 0건으로 표시되는 문제가 있었다)
                 guard components.count >= 6 else {
-                    if lineNumber <= 5 {
-                        totalReadLines -= 1 // 헤더 행 무시
-                    } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Libre 데이터 컬럼 부족 (최소 6개 필요)")))
-                    }
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Libre 데이터 컬럼 부족 (최소 6개 필요)")))
                     continue
                 }
                 
@@ -178,11 +189,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 }
 
                 guard let validDate = date else {
-                    if lineNumber <= 5 {
-                        totalReadLines -= 1
-                    } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "날짜 파싱 실패: \(dateString)")))
-                    }
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "날짜 파싱 실패: \(dateString)")))
                     continue
                 }
                 
@@ -191,11 +198,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 let valueString = components[valueIndex].trimmingCharacters(in: .whitespacesAndNewlines)
                 
                 guard !valueString.isEmpty, let value = CSVStructureDetector.parseDecimal(valueString) else {
-                    if lineNumber <= 5 {
-                        totalReadLines -= 1
-                    } else {
-                        invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): \(valueString)")))
-                    }
+                    invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "혈당 수치 파싱 실패 (빈 값이거나 숫자 아님): \(valueString)")))
                     continue
                 }
                 
@@ -210,7 +213,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             } else if isLibreFormat {
                 // 상단 헤더행 중 시작 문구가 'Freestyle Libre'가 아닌 행(예: '이름,홍길동') 배제
                 if lineNumber <= 5 {
-                    totalReadLines -= 1
+                    skipAsHeader(lineNumber, trimmedLine, String(localized: "Libre 상단 헤더 행으로 간주"))
                     continue
                 }
             }
@@ -220,7 +223,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             if isDexcomFormat {
                 // Dexcom 파일의 상단 11줄 가량은 환자/기기 정보 메타데이터이므로 패스
                 if lineNumber <= 12 && !trimmedLine.lowercased().starts(with: "index") {
-                    totalReadLines -= 1
+                    skipAsHeader(lineNumber, trimmedLine, String(localized: "Dexcom 상단 메타데이터로 간주"))
                     continue
                 }
                 
@@ -230,7 +233,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 // Dexcom 데이터는 최소 8개 이상의 컬럼(Index, Timestamp, Event Type, Event Subtype, Patient Info, Device Info, Source Device ID, Glucose Value)
                 guard components.count >= 8 else {
                     if lineNumber <= 15 {
-                        totalReadLines -= 1
+                        skipAsHeader(lineNumber, trimmedLine, String(localized: "Dexcom 헤더 행으로 간주 (컬럼 부족)"))
                     } else {
                         invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Dexcom 데이터 컬럼 부족 (최소 8개 필요)")))
                     }
@@ -296,11 +299,11 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                             detectedVendor = .custom
                             currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: validFormat, separator: delimiter)
                         } else {
-                            totalReadLines -= 1 // 헤더 행 등으로 간주하여 데이터 총건수에서 제외
+                            skipAsHeader(lineNumber, trimmedLine, String(localized: "날짜/수치 형태가 아니어서 헤더로 간주"))
                             continue
                         }
                     } else {
-                        totalReadLines -= 1 // 헤더 행 등으로 간주하여 데이터 총건수에서 제외
+                        skipAsHeader(lineNumber, trimmedLine, String(localized: "컬럼이 2개 미만이라 헤더로 간주"))
                         continue
                     }
                 } else {
@@ -308,7 +311,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                         // 에러를 던지지 않고 Custom 포맷으로 전환하여 계속 파싱(실패 처리) 유도
                         detectedVendor = .custom
                     } else {
-                        totalReadLines -= 1 // 포맷 감지 전의 기타 불필요 구문으로 간주
+                        skipAsHeader(lineNumber, trimmedLine, String(localized: "포맷 감지 전 구문으로 간주"))
                         continue
                     }
                 }
@@ -345,7 +348,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             guard let validDate = date else {
                 // 수동 매핑 지정 시, 파일 최상단부(헤더 등)에서 날짜 포맷이 안 맞으면 조용히 무시 (오류 노출 방지)
                 if manualConfig != nil && validRecords.isEmpty && lineNumber <= 15 {
-                    totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
+                    skipAsHeader(lineNumber, trimmedLine, String(localized: "헤더로 간주 (날짜 형식 불일치): \(dateString)"))
                     continue
                 }
                 invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "날짜 형식 오류: \(dateString)")))
@@ -362,7 +365,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 // 수동 매핑 지정 시, 파일 최상단부(헤더)에서 수치 변환 실패 시 조용히 무시
                 if manualConfig != nil && validRecords.isEmpty && lineNumber <= 15 {
-                    totalReadLines -= 1 // 헤더로 취급하여 전체 카운트에서 제외
+                    skipAsHeader(lineNumber, trimmedLine, String(localized: "헤더로 간주 (수치 아님): \(valueString)"))
                     continue
                 }
                 
@@ -396,7 +399,8 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             totalReadLines: totalReadLines,
             usedDateFormat: determinedDateFormat,
             usedDateOrder: resolvedDateOrder,
-            detectedDelimiter: String(delimiter)
+            detectedDelimiter: String(delimiter),
+            headerSkippedRows: headerSkippedRows
         )
     }
     

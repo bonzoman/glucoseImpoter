@@ -59,6 +59,28 @@ public struct CSVPreviewView: View {
                         detectionSection(result: result)
                     }
 
+                    // 한 건도 가져오지 못했을 때, 건너뛴 행을 보여줘 원인을 알 수 있게 한다.
+                    // (이 정보가 없으면 "아무 일도 안 일어남"으로만 보인다)
+                    if result.validRecords.isEmpty && !result.headerSkippedRows.isEmpty {
+                        Section(header: Text("건너뛴 행 (헤더로 간주됨)")) {
+                            Text("가져온 데이터가 없습니다. 아래 행들을 헤더로 판단해 건너뛰었습니다. 실제 데이터라면 열 매핑이나 날짜 형식을 확인해 주세요.")
+                                .font(.caption)
+                                .foregroundColor(.secondary)
+                            ForEach(result.headerSkippedRows) { row in
+                                VStack(alignment: .leading, spacing: 2) {
+                                    Text("Line \(row.lineNumber): \(row.reason)")
+                                        .font(.caption)
+                                        .foregroundColor(.orange)
+                                    Text(row.rawLine)
+                                        .font(.caption2)
+                                        .foregroundColor(.secondary)
+                                        .lineLimit(2)
+                                }
+                                .padding(.vertical, 2)
+                            }
+                        }
+                    }
+
                     if result.vendor == .custom || viewModel.showManualMapping {
                         Section(header: Text("알 수 없는 포맷 감지됨")) {
                             VStack(alignment: .leading, spacing: 16) {

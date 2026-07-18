@@ -194,6 +194,22 @@
         }
       }
     },
+    "Dexcom 상단 메타데이터로 간주": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as Dexcom metadata"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom 상단 메타데이터로 간주"
+          }
+        }
+      }
+    },
     "Dexcom 정상 혈당 범위 초과: %lf mg/dL": {
       "localizations": {
         "en": {
@@ -206,6 +222,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "Dexcom 정상 혈당 범위 초과: %lf mg/dL"
+          }
+        }
+      }
+    },
+    "Dexcom 헤더 행으로 간주 (컬럼 부족)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as a Dexcom header row (not enough columns)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Dexcom 헤더 행으로 간주 (컬럼 부족)"
           }
         }
       }
@@ -306,6 +338,22 @@
         }
       }
     },
+    "Libre 상단 헤더 행으로 간주": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as a Libre header row"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Libre 상단 헤더 행으로 간주"
+          }
+        }
+      }
+    },
     "Line": {
       "localizations": {
         "en": {
@@ -322,6 +370,22 @@
         }
       }
     },
+    "Line %lld: %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line %1$lld: %2$@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Line %lld: %@"
+          }
+        }
+      }
+    },
     "mg/dL": {
       "localizations": {
         "en": {
@@ -334,6 +398,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "mg/dL"
+          }
+        }
+      }
+    },
+    "가져온 데이터가 없습니다. 아래 행들을 헤더로 판단해 건너뛰었습니다. 실제 데이터라면 열 매핑이나 날짜 형식을 확인해 주세요.": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "No data was imported. The rows below were treated as headers and skipped. If they are actual data, check the column mapping or the date format."
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "가져온 데이터가 없습니다. 아래 행들을 헤더로 판단해 건너뛰었습니다. 실제 데이터라면 열 매핑이나 날짜 형식을 확인해 주세요."
+          }
+        }
+      }
+    },
+    "건너뛴 행 (헤더로 간주됨)": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Skipped Rows (Treated as Header)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "건너뛴 행 (헤더로 간주됨)"
           }
         }
       }
@@ -447,6 +543,22 @@
           "stringUnit": {
             "state": "translated",
             "value": "날짜 형식 오류: %@"
+          }
+        }
+      }
+    },
+    "날짜/수치 형태가 아니어서 헤더로 간주": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as a header (not a date/value row)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "날짜/수치 형태가 아니어서 헤더로 간주"
           }
         }
       }
@@ -1256,6 +1368,22 @@
         }
       }
     },
+    "컬럼이 2개 미만이라 헤더로 간주": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as a header (fewer than 2 columns)"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "컬럼이 2개 미만이라 헤더로 간주"
+          }
+        }
+      }
+    },
     "콤마 (,)": {
       "comment": "Name of the delimiter displayed to the user.",
       "localizations": {
@@ -1354,6 +1482,22 @@
         }
       }
     },
+    "포맷 감지 전 구문으로 간주": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as preamble before format detection"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "포맷 감지 전 구문으로 간주"
+          }
+        }
+      }
+    },
     "포맷 인식": {
       "localizations": {
         "en": {
@@ -1430,6 +1574,38 @@
           "stringUnit": {
             "state": "translated",
             "value": "해당 기간 내에 이 앱으로 저장된 데이터가 존재하지 않습니다."
+          }
+        }
+      }
+    },
+    "헤더로 간주 (날짜 형식 불일치): %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as a header (date format mismatch): %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "헤더로 간주 (날짜 형식 불일치): %@"
+          }
+        }
+      }
+    },
+    "헤더로 간주 (수치 아님): %@": {
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Treated as a header (not a number): %@"
+          }
+        },
+        "ko": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "헤더로 간주 (수치 아님): %@"
           }
         }
       }

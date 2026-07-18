@@ -48,6 +48,9 @@ public struct CSVParseResult: Equatable {
     public var usedDateFormat: String? // 파싱 시 확정되어 사용된 날짜 포맷
     public var usedDateOrder: DateComponentOrder // 일/월 순서 (모호한 포맷일 때 의미 있음)
     public var detectedDelimiter: String // 감지된 컬럼 구분자 (",", ";", "\t")
+    /// 헤더/메타데이터로 간주해 건너뛴 행 (최대 20건).
+    /// 임포트가 0건일 때 원인을 사용자에게 보여주기 위한 진단 정보.
+    public var headerSkippedRows: [CSVParseErrorRecord]
 }
 
 /// 사용자가 직접 지정하는 수동 CSV 파싱 명세
