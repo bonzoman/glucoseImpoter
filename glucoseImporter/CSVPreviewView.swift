@@ -55,6 +55,10 @@ public struct CSVPreviewView: View {
                         }
                     }
                     
+                    if !result.validRecords.isEmpty {
+                        detectionSection(result: result)
+                    }
+
                     if result.vendor == .custom || viewModel.showManualMapping {
                         Section(header: Text("알 수 없는 포맷 감지됨")) {
                             VStack(alignment: .leading, spacing: 16) {
@@ -286,9 +290,65 @@ public struct CSVPreviewView: View {
         }
     }
     
+    /// 감지 결과를 사용자에게 보여주고, 날짜 해석이 틀렸으면 바로 바꿀 수 있게 한다.
+    /// 자동 감지는 100% 확신할 수 없으므로(03/05는 3월 5일일 수도, 5월 3일일 수도 있음)
+    /// 잘못된 해석이 조용히 넘어가지 않도록 실제 변환 예시를 함께 노출한다.
+    @ViewBuilder
+    private func detectionSection(result: CSVParseResult) -> some View {
+        Section(header: Text("데이터 형식 확인")) {
+            HStack {
+                Text("구분자")
+                Spacer()
+                Text(CSVStructureDetector.displayName(for: Character(result.detectedDelimiter)))
+                    .foregroundColor(.secondary)
+            }
+
+            if let sample = result.validRecords.first {
+                VStack(alignment: .leading, spacing: 6) {
+                    HStack {
+                        Text("첫 데이터 해석")
+                        Spacer()
+                    }
+                    Text(sampleDateDescription(sample.timestamp))
+                        .font(.subheadline)
+                        .bold()
+                        .foregroundColor(.blue)
+                }
+                .padding(.vertical, 2)
+            }
+
+            // 일/월 순서가 모호한 형식으로 읽혔을 때만 변경 수단을 제공
+            if let format = result.usedDateFormat, FlexibleDateParser.isAmbiguousFormat(format) {
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("날짜를 \(result.usedDateOrder.displayName) 순서로 읽었습니다.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Button {
+                        viewModel.flipDateOrder()
+                    } label: {
+                        Label("날짜가 다르면 순서 바꾸기", systemImage: "arrow.triangle.2.circlepath")
+                            .font(.subheadline)
+                    }
+                    .disabled(viewModel.isImporting)
+                }
+                .padding(.vertical, 2)
+            }
+        }
+    }
+
+    /// 변환 결과를 사용자가 한눈에 검증할 수 있는 형태로 표시
+    private func sampleDateDescription(_ date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .long
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+
     private func extractSampleColumns() {
-        if let lines = viewModel.parseResult?.invalidRecords.prefix(5).map({ $0.rawLine }), let targetLine = lines.last(where: { $0.contains(",") }) ?? lines.last {
-            sampleColumns = targetLine.components(separatedBy: ",").map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t")) }
+        let delimiter = viewModel.parseResult?.detectedDelimiter ?? ","
+        if let lines = viewModel.parseResult?.invalidRecords.prefix(5).map({ $0.rawLine }), let targetLine = lines.last(where: { $0.contains(delimiter) }) ?? lines.last {
+            sampleColumns = targetLine.components(separatedBy: delimiter).map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t")) }
             if sampleColumns.count > 0 { selectedDateIndex = 0 }
             if sampleColumns.count > 1 { selectedValueIndex = 1 }
         } else if viewModel.parseResult?.validRecords.isEmpty == false {

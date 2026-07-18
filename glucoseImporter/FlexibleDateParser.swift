@@ -1,9 +1,22 @@
 import Foundation
 
 /// 일/월 컬럼의 순서. 슬래시·점 구분 날짜(예: 03/05/2024)에서만 의미가 있다.
-public enum DateComponentOrder {
+public enum DateComponentOrder: Equatable {
     case dayFirst    // dd/MM/yyyy (한국·유럽 등 대부분)
     case monthFirst  // MM/dd/yyyy (미국)
+
+    /// 반대 순서 (사용자가 미리보기에서 뒤집을 때 사용)
+    public var flipped: DateComponentOrder {
+        self == .dayFirst ? .monthFirst : .dayFirst
+    }
+
+    /// 사용자에게 보여줄 이름
+    public var displayName: String {
+        switch self {
+        case .dayFirst:   return String(localized: "일/월/년 (25/03/2024)")
+        case .monthFirst: return String(localized: "월/일/년 (03/25/2024)")
+        }
+    }
 }
 
 /// 여러 나라의 다양한 날짜 포맷을 파싱하기 위한 유연한 파서.
@@ -88,6 +101,12 @@ public struct FlexibleDateParser {
             if let decided = decideOrder(from: field) { return decided }
         }
         return localeDefaultOrder()
+    }
+
+    /// 해당 포맷이 일/월 순서가 모호한 종류인지 여부.
+    /// 모호한 포맷으로 파싱됐을 때만 사용자에게 "순서 바꾸기"를 제안하면 된다.
+    public static func isAmbiguousFormat(_ format: String) -> Bool {
+        dayFirstFormats.contains(format) || monthFirstFormats.contains(format)
     }
 
     // MARK: - Private

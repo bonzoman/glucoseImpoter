@@ -46,6 +46,8 @@ public struct CSVParseResult: Equatable {
     public var skippedReason: String?
     public var totalReadLines: Int // 파싱 시 읽어들인 실제 데이터 행 수
     public var usedDateFormat: String? // 파싱 시 확정되어 사용된 날짜 포맷
+    public var usedDateOrder: DateComponentOrder // 일/월 순서 (모호한 포맷일 때 의미 있음)
+    public var detectedDelimiter: String // 감지된 컬럼 구분자 (",", ";", "\t")
 }
 
 /// 사용자가 직접 지정하는 수동 CSV 파싱 명세

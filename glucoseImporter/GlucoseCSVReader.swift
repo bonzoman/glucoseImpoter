@@ -43,7 +43,7 @@ public enum GlucoseCSVReaderError: Error, LocalizedError {
 
 /// 테스트 용이성(Mocking)을 위한 프로토콜 정의
 public protocol GlucoseCSVReading {
-    func read(from url: URL, targetUnit: GlucoseUnit?, manualConfig: ManualCSVFormat?) async throws -> CSVParseResult
+    func read(from url: URL, targetUnit: GlucoseUnit?, manualConfig: ManualCSVFormat?, dateOrderOverride: DateComponentOrder?) async throws -> CSVParseResult
 }
 
 // MARK: - Reader Implementation
@@ -69,8 +69,9 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
     ///   - url: CSV 파일의 로컬 URL 경로
     ///   - targetUnit: 강제할 수치 단위 (nil이면 헤더를 기반으로 자동 유추)
     ///   - manualConfig: 수동 매핑 설정 (제공 시 자동 감지 생략)
+    ///   - dateOrderOverride: 일/월 순서를 사용자가 직접 지정한 경우 (nil이면 파일 스캔으로 자동 판단)
     /// - Returns: 안전하게 파싱된 `CSVParseResult` (성공/실패 분리)
-    public func read(from url: URL, targetUnit: GlucoseUnit? = nil, manualConfig: ManualCSVFormat? = nil) async throws -> CSVParseResult {
+    public func read(from url: URL, targetUnit: GlucoseUnit? = nil, manualConfig: ManualCSVFormat? = nil, dateOrderOverride: DateComponentOrder? = nil) async throws -> CSVParseResult {
         var validRecords: [GlucoseRecord] = []
         var invalidRecords: [CSVParseErrorRecord] = []
         var skippedCount = 0
@@ -82,11 +83,6 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         var isLibreFormat = false
         var isDexcomFormat = false
         var determinedDateFormat: String? = nil
-        
-        if let config = manualConfig {
-            detectedVendor = .custom
-            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: config.dateColumnIndex, valueIndex: config.valueColumnIndex, recordTypeIndex: nil, dateFormat: config.dateFormat ?? "")
-        }
         
         // 1. 인코딩 처리: UTF-8 시도 후 실패하면 CP949(EUC-KR) 시도, 정 안되면 Lossy UTF8
         let content = try readStringWithEncodings(from: url)
@@ -106,10 +102,21 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
         
         let lines = content.components(separatedBy: "\n")
 
+        // 나라별 CSV 구조 판별: 세미콜론/탭 구분자를 쓰는 파일(유럽식) 대응
+        let delimiter = CSVStructureDetector.detectDelimiter(lines: lines)
+
         // 모호한 일/월 순서(예: 03/05/2024)를 파일 전체를 스캔해 1회 결정.
+        // 사용자가 미리보기에서 직접 지정했다면 그 값을 그대로 사용.
         // manualConfig가 있으면 그 날짜 컬럼을, 없으면 관례적으로 첫 컬럼(0)을 기준으로 판단.
         let ambiguityDateColumn = manualConfig?.dateColumnIndex ?? 0
-        let resolvedDateOrder = FlexibleDateParser.resolveOrder(lines: lines, dateColumnIndex: ambiguityDateColumn)
+        let resolvedDateOrder = dateOrderOverride
+            ?? FlexibleDateParser.resolveOrder(lines: lines, dateColumnIndex: ambiguityDateColumn, separator: delimiter)
+
+        // 수동 매핑이 지정된 경우, 감지된 구분자를 반영해 파싱 규격을 확정
+        if let config = manualConfig {
+            detectedVendor = .custom
+            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: config.dateColumnIndex, valueIndex: config.valueColumnIndex, recordTypeIndex: nil, dateFormat: config.dateFormat ?? "", separator: delimiter)
+        }
 
         print("📄 [CSVReader] 파일 읽기 시작 (총 \(lines.count)줄)")
         
@@ -128,7 +135,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 isLibreFormat = true
                 detectedVendor = .libre
                 
-                let components = trimmedLine.split(separator: ",", omittingEmptySubsequences: false)
+                let components = trimmedLine.split(separator: delimiter, omittingEmptySubsequences: false)
                 
                 // 요구된 인덱스 규칙 준수를 위한 최소 컬럼 개수 확인 (스캔혈당은 인덱스 5)
                 guard components.count >= 6 else {
@@ -170,7 +177,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 let valueIndex = (recordType == "0") ? 4 : 5
                 let valueString = components[valueIndex].trimmingCharacters(in: .whitespacesAndNewlines)
                 
-                guard !valueString.isEmpty, let value = Double(valueString) else {
+                guard !valueString.isEmpty, let value = CSVStructureDetector.parseDecimal(valueString) else {
                     if lineNumber <= 5 {
                         totalReadLines -= 1
                     } else {
@@ -204,7 +211,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                     continue
                 }
                 
-                let components = trimmedLine.split(separator: ",", omittingEmptySubsequences: false)
+                let components = trimmedLine.split(separator: delimiter, omittingEmptySubsequences: false)
                     .map { $0.trimmingCharacters(in: CharacterSet(charactersIn: " \"\n\r\t")) }
                 
                 // Dexcom 데이터는 최소 8개 이상의 컬럼(Index, Timestamp, Event Type, Event Subtype, Patient Info, Device Info, Source Device ID, Glucose Value)
@@ -240,7 +247,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 }
                 determinedDateFormat = "yyyy-MM-dd'T'HH:mm:ss"
                 
-                guard !valueString.isEmpty, let value = Double(valueString) else {
+                guard !valueString.isEmpty, let value = CSVStructureDetector.parseDecimal(valueString) else {
                     invalidRecords.append(CSVParseErrorRecord(lineNumber: lineNumber, rawLine: trimmedLine, reason: String(localized: "Dexcom 혈당치 변환 실패: \(valueString)")))
                     continue
                 }
@@ -267,14 +274,14 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 
                 if lineNumber <= 5 {
                     // 첫 몇 줄 범용 탐색: 단순 "날짜,값" 형태
-                    let comps = trimmedLine.split(separator: ",", omittingEmptySubsequences: false)
+                    let comps = trimmedLine.split(separator: delimiter, omittingEmptySubsequences: false)
                     if comps.count >= 2 {
                         let dateCandidate = String(comps[0].trimmingCharacters(in: .whitespacesAndNewlines))
                         let foundFormat = FlexibleDateParser.parse(dateCandidate, order: resolvedDateOrder)?.format
 
-                        if let validFormat = foundFormat, Double(comps[1].trimmingCharacters(in: .whitespacesAndNewlines)) != nil {
+                        if let validFormat = foundFormat, CSVStructureDetector.parseDecimal(String(comps[1])) != nil {
                             detectedVendor = .custom
-                            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: validFormat)
+                            currentDetection = createDetection(vendor: .custom, unit: targetUnit ?? .mgDL, dateIndex: 0, valueIndex: 1, recordTypeIndex: nil, dateFormat: validFormat, separator: delimiter)
                         } else {
                             totalReadLines -= 1 // 헤더 행 등으로 간주하여 데이터 총건수에서 제외
                             continue
@@ -332,7 +339,7 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
                 continue
             }
             
-            guard let originalValue = Double(valueString) else {
+            guard let originalValue = CSVStructureDetector.parseDecimal(valueString) else {
                 if let typeIdx = format.recordTypeColumnIndex, components.count > typeIdx {
                     let recordType = components[typeIdx].trimmingCharacters(in: .whitespacesAndNewlines)
                     if recordType != "0" && recordType != "1" {
@@ -374,7 +381,9 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
             skippedCount: skippedCount,
             skippedReason: skippedReason,
             totalReadLines: totalReadLines,
-            usedDateFormat: determinedDateFormat
+            usedDateFormat: determinedDateFormat,
+            usedDateOrder: resolvedDateOrder,
+            detectedDelimiter: String(delimiter)
         )
     }
     

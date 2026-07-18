@@ -31,6 +31,10 @@ public final class CSVImportViewModel: ObservableObject {
     // 수동 매핑 상태
     @Published public var showManualMapping = false
     public var lastLoadedURL: URL? = nil
+
+    // 사용자가 미리보기에서 직접 지정한 일/월 순서 (nil이면 자동 판단)
+    public var dateOrderOverride: DateComponentOrder? = nil
+    private var lastManualConfig: ManualCSVFormat? = nil
     
     // 저장 성공 상태 
     @Published public var showSaveSuccessAlert = false
@@ -40,40 +44,39 @@ public final class CSVImportViewModel: ObservableObject {
     
     public func loadCSV(from url: URL) {
         lastLoadedURL = url
-        Task {
-            isImporting = true
-            errorMessage = nil
-            do {
-                let reader = GlucoseCSVReader()
-                let result = try await reader.read(from: url, targetUnit: .mgDL)
-                
-                await MainActor.run {
-                    self.parseResult = result
-                    self.detectedVendor = result.vendor
-                    self.validRecords = result.validRecords
-                    self.invalidRecords = result.invalidRecords
-                    self.usedDateFormat = result.usedDateFormat
-                    self.isLoading = false
-                    
-                    // 미리보기는 최대 100건까지만 노출
-                    self.previewRecords = Array(result.validRecords.prefix(100))
-                }
-            } catch {
-                self.errorMessage = error.localizedDescription
-            }
-            isImporting = false
-        }
+        lastManualConfig = nil
+        dateOrderOverride = nil
+        parse()
     }
-    
+
     public func applyManualMapping(config: ManualCSVFormat) {
+        lastManualConfig = config
+        parse(isManualMapping: true)
+    }
+
+    /// 미리보기에서 사용자가 일/월 순서를 뒤집어 다시 파싱한다.
+    /// (예: 03/05/2024 를 3월 5일로 읽었는데 실제로는 5월 3일인 경우)
+    public func flipDateOrder() {
+        guard let current = parseResult?.usedDateOrder else { return }
+        dateOrderOverride = current.flipped
+        parse(isManualMapping: lastManualConfig != nil)
+    }
+
+    /// 공통 파싱 경로 (최초 로드 / 수동 매핑 / 순서 뒤집기 모두 사용)
+    private func parse(isManualMapping: Bool = false) {
         guard let url = lastLoadedURL else { return }
         Task {
             isImporting = true
             errorMessage = nil
             do {
                 let reader = GlucoseCSVReader()
-                let result = try await reader.read(from: url, targetUnit: .mgDL, manualConfig: config)
-                
+                let result = try await reader.read(
+                    from: url,
+                    targetUnit: .mgDL,
+                    manualConfig: lastManualConfig,
+                    dateOrderOverride: dateOrderOverride
+                )
+
                 await MainActor.run {
                     self.parseResult = result
                     self.detectedVendor = result.vendor
@@ -81,12 +84,15 @@ public final class CSVImportViewModel: ObservableObject {
                     self.invalidRecords = result.invalidRecords
                     self.usedDateFormat = result.usedDateFormat
                     self.isLoading = false
-                    
+
+                    // 미리보기는 최대 100건까지만 노출
                     self.previewRecords = Array(result.validRecords.prefix(100))
-                    self.showManualMapping = false
-                    
-                    if result.validRecords.isEmpty {
-                        self.errorMessage = "파싱 가능한 정상 데이터가 0건입니다. 매핑 열을 잘못 지정했거나 파일 내용에 문제가 없는지(숫자 필드 등) 다시 확인해주세요."
+
+                    if isManualMapping {
+                        self.showManualMapping = false
+                        if result.validRecords.isEmpty {
+                            self.errorMessage = "파싱 가능한 정상 데이터가 0건입니다. 매핑 열을 잘못 지정했거나 파일 내용에 문제가 없는지(숫자 필드 등) 다시 확인해주세요."
+                        }
                     }
                 }
             } catch {
