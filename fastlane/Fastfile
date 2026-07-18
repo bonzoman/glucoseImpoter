@@ -113,6 +113,6 @@ platform :ios do
       }
     )
 
-    UI.success!(options[:submit] ? "🎉 심사 제출까지 완료!" : "✅ 업로드 완료 (심사는 수동 제출)")
+    UI.success(options[:submit] ? "🎉 심사 제출까지 완료!" : "✅ 업로드 완료 (심사는 수동 제출)")
   end
 end
