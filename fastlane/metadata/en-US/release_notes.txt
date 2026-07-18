@@ -1,3 +1,5 @@
-Improved CSV import to support date formats from more countries.
-- Automatically recognizes many date formats, including yyyy-mm-dd, mm/dd/yyyy (US), and dd/mm/yyyy or dd.mm.yyyy (Europe).
-- Analyzes the whole file to determine day/month order, preventing dates from being misread.
+CSV import now supports file formats used in more countries.
+
+- Automatic date detection: reads 2024-03-25, 03/25/2024 (US), 25/03/2024 and 25.03.2024 (Europe), and more.
+- European CSV support: files separated by semicolons (;) and values written with a decimal comma (120,5) are now recognized.
+- Format confirmation: the preview shows the detected delimiter and how the first row was interpreted, so you can switch the day/month order if a date was read incorrectly.
