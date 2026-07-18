@@ -272,3 +272,68 @@ struct HyphenDateTests {
         #expect(FlexibleDateParser.resolveOrder(lines: lines, dateColumnIndex: 0) == .dayFirst)
     }
 }
+
+// MARK: - 실제 Libre 파일 (하이픈 날짜) 재현
+
+@MainActor
+struct LibreHyphenDateTests {
+    @Test func importsLibreWithHyphenDates() async throws {
+        let csv = """
+        FreeStyle LibreLink,E0E84C13-9B32-40D2-8E43-D24BF0686B9E,20-02-2026 22:34,0,136,,,,,,,,,,,,,,
+        FreeStyle LibreLink,E0E84C13-9B32-40D2-8E43-D24BF0686B9E,20-02-2026 22:50,0,119,,,,,,,,,,,,,,
+        """
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("libre_\(UUID().uuidString).csv")
+        try csv.write(to: url, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let result = try await GlucoseCSVReader().read(from: url, targetUnit: .mgDL)
+
+        #expect(result.validRecords.count == 2)
+        if let first = result.validRecords.first {
+            let c = Calendar(identifier: .gregorian)
+                .dateComponents([.year, .month, .day, .hour, .minute], from: first.timestamp)
+            // 20-02-2026 → 2026년 2월 20일 22:34
+            #expect(c.year == 2026 && c.month == 2 && c.day == 20)
+            #expect(c.hour == 22 && c.minute == 34)
+            #expect(first.value == 136)
+        }
+    }
+}
+
+// MARK: - 실제 FreeStyle LibreLink 파일 (회귀 테스트)
+
+@MainActor
+struct RealLibreFileTests {
+
+    /// 실제 LibreLink 내보내기 파일. 날짜가 dd-MM-yyyy(하이픈)이고
+    /// 날짜는 2번 열에 있다. 일/월 순서 판별이 0번 열(기기명)을 보면
+    /// 근거를 못 찾아 기기 지역으로 잘못 폴백되어 전량 파싱 실패했었다.
+    @Test func importsRealLibreLinkFile() async throws {
+        let csv = """
+        혈당 데이터,생성일,2026-07-18 13:27 UTC,생성자,승준 오
+        장치,일련 번호,장치 타임스탬프,기록 유형,과거 혈당 mg/dL,혈당 스캔 mg/dL,비수치적 초속효성 인슐린,초속효성 인슐린(단위),비수치적 식품,탄수화물(그램),탄수화물(1회 제공량),비수치적 지속형 인슐린,지속형 인슐린(단위),메모,스트립 혈당 mg/dL,케톤 mmol/L,식사 인슐린(단위),인슐린 수정(단위),사용자 변경 인슐린(단위)
+        FreeStyle LibreLink,E0E84C13-9B32-40D2-8E43-D24BF0686B9E,20-02-2026 22:34,0,136,,,,,,,,,,,,,,
+        FreeStyle LibreLink,E0E84C13-9B32-40D2-8E43-D24BF0686B9E,20-02-2026 22:50,0,119,,,,,,,,,,,,,,
+        """
+        let url = FileManager.default.temporaryDirectory
+            .appendingPathComponent("libre_\(UUID().uuidString).csv")
+        try csv.write(to: url, atomically: true, encoding: .utf8)
+        defer { try? FileManager.default.removeItem(at: url) }
+
+        let r = try await GlucoseCSVReader().read(from: url, targetUnit: .mgDL)
+
+        #expect(r.vendor == .libre)
+        #expect(r.validRecords.count == 2)
+        #expect(r.invalidRecords.isEmpty)
+        // 20-02-2026 은 일=20 이므로 일-먼저로 확정되어야 한다
+        #expect(r.usedDateOrder == .dayFirst)
+
+        let cal = Calendar(identifier: .gregorian)
+        let first = cal.dateComponents([.year, .month, .day, .hour, .minute], from: r.validRecords[0].timestamp)
+        #expect(first.year == 2026 && first.month == 2 && first.day == 20)
+        #expect(first.hour == 22 && first.minute == 34)
+        #expect(r.validRecords[0].value == 136)
+        #expect(r.validRecords[1].value == 119)
+    }
+}

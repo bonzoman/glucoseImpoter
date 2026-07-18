@@ -107,8 +107,21 @@ public final class GlucoseCSVReader: GlucoseCSVReading {
 
         // 모호한 일/월 순서(예: 03/05/2024)를 파일 전체를 스캔해 1회 결정.
         // 사용자가 미리보기에서 직접 지정했다면 그 값을 그대로 사용.
-        // manualConfig가 있으면 그 날짜 컬럼을, 없으면 관례적으로 첫 컬럼(0)을 기준으로 판단.
-        let ambiguityDateColumn = manualConfig?.dateColumnIndex ?? 0
+        //
+        // 스캔 대상은 반드시 "실제 날짜가 들어있는 열"이어야 한다.
+        // Libre는 2번 열(장치 타임스탬프), Dexcom은 1번 열이 날짜이며,
+        // 0번 열을 보면 기기명 같은 문자열이라 판단 근거를 못 찾고
+        // 기기 지역 설정으로 잘못 폴백된다.
+        let ambiguityDateColumn: Int
+        if let config = manualConfig {
+            ambiguityDateColumn = config.dateColumnIndex
+        } else if isLibreFormat {
+            ambiguityDateColumn = 2
+        } else if isDexcomFormat {
+            ambiguityDateColumn = 1
+        } else {
+            ambiguityDateColumn = 0
+        }
         let resolvedDateOrder = dateOrderOverride
             ?? FlexibleDateParser.resolveOrder(lines: lines, dateColumnIndex: ambiguityDateColumn, separator: delimiter)
 
